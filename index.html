@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Steam 遊戲展示</title>
+    <title>台灣steam遊戲列表</title>
     <!-- 引入 Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -36,61 +36,37 @@
       .lang-btn:hover {
         text-decoration: underline;
       }
+      /* CSV 選擇按鈕樣式 */
+      .csv-btn {
+        background: #3b82f6;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 0.375rem;
+        cursor: pointer;
+      }
+      .csv-btn:hover {
+        background: #2563eb;
+      }
     </style>
   </head>
   <body class="min-h-screen bg-white">
     <!-- Navigation 區域 -->
     <nav class="bg-emerald-500 text-white">
-      <!-- 使用 flex 來左右分區，左邊為其他連結，右邊為語言切換按鈕 -->
+      <!-- 使用 flex 分左右區，左側為導覽連結，右側為語言切換按鈕 -->
       <div class="max-w-7xl mx-auto px-4 flex justify-between items-center h-14">
-        <!-- 左側的導覽連結 -->
+        <!-- 左側導覽連結 -->
         <div class="flex space-x-8">
           <a
             href="https://example.com/top"
             target="_blank"
             rel="noopener noreferrer"
             class="hover:text-emerald-100"
-            >トップページ</a
-          >
-          <a
-            href="https://example.com/teamup"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="hover:text-emerald-100"
-            >Team-Up!とは</a
-          >
-          <a
-            href="https://example.com/charm"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="hover:text-emerald-100"
-            >チームアップちゃん</a
-          >
-          <a
-            href="https://example.com/howto"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="hover:text-emerald-100"
-            >参加方法</a
-          >
-          <a
-            href="https://example.com/works"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="hover:text-emerald-100"
-            >作品一覧</a
-          >
-          <a
-            href="https://example.com/unityroom"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="hover:text-emerald-100"
-            >unityroom</a
+            >FilterGame</a
           >
         </div>
-        <!-- 右側的語言切換按鈕 -->
+        <!-- 右側語言切換按鈕 -->
         <div id="language-switcher" class="flex space-x-4">
-          <!-- 按鈕的 data-lang 屬性代表語言代碼 -->
           <button class="lang-btn" data-lang="zh">中文</button>
           <button class="lang-btn" data-lang="en">English</button>
           <button class="lang-btn" data-lang="ja">日本語</button>
@@ -98,15 +74,21 @@
       </div>
     </nav>
 
+    <!-- CSV 選擇按鈕區 -->
+    <div id="csv-buttons" class="max-w-7xl mx-auto px-4 py-2 flex space-x-4">
+      <!-- 每個按鈕的 data-csv 屬性指定 CSV 檔案名稱，按鈕文字自訂 -->
+      <button class="csv-btn" data-csv="cards.csv">台北電玩展-國產遊系列表</button>
+      <button class="csv-btn" data-csv="cards2.csv">台灣國產遊戲-研發中列表</button>
+      <button class="csv-btn" data-csv="cards3.csv">中國友商列表</button>
+      <!-- 可依需求新增更多按鈕 -->
+    </div>
+
     <!-- Main Content 區域 -->
     <main class="max-w-7xl mx-auto px-4 py-8">
-      <h1 class="text-4xl font-medium text-gray-800 mb-2">
-        Steam 遊戲展示
-      </h1>
+      <h1 class="text-4xl font-medium text-gray-800 mb-2">Steam 遊戲展示</h1>
       <p class="text-gray-600 mb-8">
-        此頁面依據 CSV 中提供的資料產生遊戲卡片，並根據使用者瀏覽器語言及切換按鈕顯示對應語言的遊戲名稱。
+        此頁面依據 CSV 中提供的資料產生遊戲卡片，並根據語言設定與 CSV 按鈕動態更新。
       </p>
-
       <!-- 遊戲卡片容器 -->
       <div id="game-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
     </main>
@@ -116,7 +98,7 @@
       /**********************
        * 語言切換功能
        **********************/
-      // 初始語言：依據瀏覽器語言設定
+      // 根據瀏覽器語言決定預設語言
       let currentLanguage = "en";
       const navLang = navigator.language.toLowerCase();
       if (navLang.startsWith("zh")) {
@@ -124,10 +106,8 @@
       } else if (navLang.startsWith("ja")) {
         currentLanguage = "ja";
       }
-
-      // 當前語言設定好後，後續會用來更新每個遊戲卡片的標題
+      // 更新所有卡片標題（依據 data-xxx 屬性）
       function updateCardTitles() {
-        // 對所有具有 .game-title 的 <h2> 元素進行更新
         document.querySelectorAll(".game-title").forEach((h2) => {
           const newText = h2.getAttribute("data-" + currentLanguage);
           if (newText) {
@@ -135,130 +115,123 @@
           }
         });
       }
-
-      // 設定右上角的語言切換按鈕點擊事件
+      // 語言切換按鈕事件
       document.querySelectorAll(".lang-btn").forEach((btn) => {
         btn.addEventListener("click", function () {
-          const lang = this.getAttribute("data-lang");
-          currentLanguage = lang;
+          currentLanguage = this.getAttribute("data-lang");
           updateCardTitles();
         });
       });
 
       /**********************
-       * CSV 讀取及遊戲卡片建立（增加防呆機制）
+       * CSV 讀取及遊戲卡片建立（含防呆機制）
        **********************/
-      // CSV 檔格式：steamLink,title_en,title_zh,title_ja
-      fetch("cards.csv")
-        .then((response) => response.text())
-        .then((text) => {
-          const lines = text.trim().split("\n");
-          // 第一行為表頭，從第二行開始處理資料
-          const grid = document.getElementById("game-grid");
-
-          for (let i = 1; i < lines.length; i++) {
-            try {
-              // 每行獨立解析，如果發生錯誤就會被 catch 到
-              const row = lines[i].split(",");
-              if (row.length < 4) {
-                console.error(
-                  `第 ${i + 1} 行資料不足欄位，將跳過：${lines[i]}`
-                );
-                continue;
-              }
-
-              const steamLink = row[0].trim();
-              const title_en = row[1].trim();
-              const title_zh = row[2].trim();
-              const title_ja = row[3].trim();
-
-              // 從 steamLink 擷取 AppID
-              // 假設連結格式例如：https://store.steampowered.com/app/620/Portal_2/
-              const regex = /\/app\/(\d+)\//;
-              const match = steamLink.match(regex);
-              if (!match) {
-                console.error(
-                  `第 ${i + 1} 行無法解析 Steam 連結，將跳過：${steamLink}`
-                );
-                continue;
-              }
-              const appId = match[1];
-              // 根據 AppID 組合 library_capsule 圖片 URL
-              const imageUrl = `https://steamcdn-a.akamaihd.net/steam/apps/${appId}/library_600x900_2x.jpg`;
-
-              // 建立遊戲卡片的 DOM 結構
-              const cardDiv = document.createElement("div");
-              cardDiv.className = "game-card";
-
-              const aTag = document.createElement("a");
-              aTag.href = steamLink;
-              aTag.target = "_blank";
-              aTag.rel = "noopener noreferrer";
-              aTag.className =
-                "block overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300";
-
-              // 設定內部容器，保持 3:4 長寬比例
-              const innerDiv = document.createElement("div");
-              innerDiv.className = "relative aspect-[3/4]";
-
-              // 圖片元素
-              const imgTag = document.createElement("img");
-              imgTag.src = imageUrl;
-              imgTag.alt = title_en; // alt 文字以英文名稱為預設
-              imgTag.className = "object-cover w-full h-full";
-              innerDiv.appendChild(imgTag);
-
-              // 覆蓋層：顯示遊戲名稱
-              const overlayDiv = document.createElement("div");
-              overlayDiv.className =
-                "absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4";
-
-              const h2 = document.createElement("h2");
-              // 為標題設定 class 以便後續更新
-              h2.className = "game-title text-white text-xl font-medium";
-              // 將各語言的標題存入 data 屬性
-              h2.setAttribute("data-en", title_en);
-              h2.setAttribute("data-zh", title_zh);
-              h2.setAttribute("data-ja", title_ja);
-              // 初始顯示根據 currentLanguage
-              h2.textContent = h2.getAttribute("data-" + currentLanguage);
-
-              overlayDiv.appendChild(h2);
-              innerDiv.appendChild(overlayDiv);
-              aTag.appendChild(innerDiv);
-              cardDiv.appendChild(aTag);
-              grid.appendChild(cardDiv);
-            } catch (error) {
-              console.error(
-                `處理第 ${i + 1} 行資料時發生錯誤，將跳過該行：${lines[i]}`,
-                error
-              );
-              // 即使遇到錯誤也不影響後續資料的處理
-              continue;
-            }
-          }
-
-          /**********************
-           * Intersection Observer 動畫
-           **********************/
-          const observer = new IntersectionObserver(
-            (entries, obs) => {
-              entries.forEach((entry) => {
-                if (entry.isIntersecting) {
-                  entry.target.classList.add("in-view");
-                  obs.unobserve(entry.target);
+      function loadCSV(csvFile) {
+        const grid = document.getElementById("game-grid");
+        // 清除目前的卡片
+        grid.innerHTML = "";
+        fetch(csvFile)
+          .then((response) => response.text())
+          .then((text) => {
+            const lines = text.trim().split("\n");
+            // 第一行為表頭，從第二行開始處理資料
+            for (let i = 1; i < lines.length; i++) {
+              try {
+                const row = lines[i].split(",");
+                if (row.length < 4) {
+                  console.error(
+                    `第 ${i + 1} 行資料不足欄位，將跳過：${lines[i]}`
+                  );
+                  continue;
                 }
-              });
-            },
-            { threshold: 0.1 }
+                const steamLink = row[0].trim();
+                const title_en = row[1].trim();
+                const title_zh = row[2].trim();
+                const title_ja = row[3].trim();
+                // 從 steamLink 擷取 AppID（格式例如：https://store.steampowered.com/app/620/Portal_2/）
+                const regex = /\/app\/(\d+)\//;
+                const match = steamLink.match(regex);
+                if (!match) {
+                  console.error(
+                    `第 ${i + 1} 行無法解析 Steam 連結，將跳過：${steamLink}`
+                  );
+                  continue;
+                }
+                const appId = match[1];
+                // 組合 library_capsule 圖片 URL
+                const imageUrl = `https://steamcdn-a.akamaihd.net/steam/apps/${appId}/library_600x900_2x.jpg`;
+                // 建立遊戲卡片 DOM 結構
+                const cardDiv = document.createElement("div");
+                cardDiv.className = "game-card";
+                const aTag = document.createElement("a");
+                aTag.href = steamLink;
+                aTag.target = "_blank";
+                aTag.rel = "noopener noreferrer";
+                aTag.className =
+                  "block overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300";
+                // 內部容器設定 3:4 長寬比例
+                const innerDiv = document.createElement("div");
+                innerDiv.className = "relative aspect-[3/4]";
+                // 圖片元素
+                const imgTag = document.createElement("img");
+                imgTag.src = imageUrl;
+                imgTag.alt = title_en; // alt 預設為英文標題
+                imgTag.className = "object-cover w-full h-full";
+                innerDiv.appendChild(imgTag);
+                // 覆蓋層，顯示遊戲名稱
+                const overlayDiv = document.createElement("div");
+                overlayDiv.className =
+                  "absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4";
+                const h2 = document.createElement("h2");
+                h2.className = "game-title text-white text-xl font-medium";
+                h2.setAttribute("data-en", title_en);
+                h2.setAttribute("data-zh", title_zh);
+                h2.setAttribute("data-ja", title_ja);
+                h2.textContent = h2.getAttribute("data-" + currentLanguage);
+                overlayDiv.appendChild(h2);
+                innerDiv.appendChild(overlayDiv);
+                aTag.appendChild(innerDiv);
+                cardDiv.appendChild(aTag);
+                grid.appendChild(cardDiv);
+              } catch (error) {
+                console.error(
+                  `處理第 ${i + 1} 行資料時發生錯誤，將跳過該行：${lines[i]}`,
+                  error
+                );
+                continue;
+              }
+            }
+            // 設定 Intersection Observer 以實現進場動畫
+            const observer = new IntersectionObserver(
+              (entries, obs) => {
+                entries.forEach((entry) => {
+                  if (entry.isIntersecting) {
+                    entry.target.classList.add("in-view");
+                    obs.unobserve(entry.target);
+                  }
+                });
+              },
+              { threshold: 0.1 }
+            );
+            document.querySelectorAll(".game-card").forEach((card) => {
+              observer.observe(card);
+            });
+          })
+          .catch((error) =>
+            console.error("讀取 CSV 檔案發生錯誤:", error)
           );
-          document.querySelectorAll(".game-card").forEach((card) => {
-            observer.observe(card);
-          });
-        })
-        .catch((error) =>
-          console.error("讀取 CSV 檔案發生錯誤:", error)
-        );
+      }
+
+      // CSV 選擇按鈕事件（多個按鈕皆支援）
+      document.querySelectorAll(".csv-btn").forEach((btn) => {
+        btn.addEventListener("click", function () {
+          const csvFile = this.getAttribute("data-csv");
+          loadCSV(csvFile);
+        });
+      });
+
+      // 頁面初始時，預設載入第一個 CSV（例如：cards.csv）
+      loadCSV("cards.csv");
     </script>
   </body>
 </html>
