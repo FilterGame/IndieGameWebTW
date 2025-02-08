@@ -146,7 +146,7 @@
       });
 
       /**********************
-       * CSV 讀取及遊戲卡片建立
+       * CSV 讀取及遊戲卡片建立（增加防呆機制）
        **********************/
       // CSV 檔格式：steamLink,title_en,title_zh,title_ja
       fetch("cards.csv")
@@ -157,70 +157,85 @@
           const grid = document.getElementById("game-grid");
 
           for (let i = 1; i < lines.length; i++) {
-            // 用逗號分隔欄位，注意：若欄位內有逗號則需要使用更專業的 CSV 解析器
-            const row = lines[i].split(",");
-            if (row.length < 4) continue; // 如果欄位數不足則跳過
+            try {
+              // 每行獨立解析，如果發生錯誤就會被 catch 到
+              const row = lines[i].split(",");
+              if (row.length < 4) {
+                console.error(
+                  `第 ${i + 1} 行資料不足欄位，將跳過：${lines[i]}`
+                );
+                continue;
+              }
 
-            const steamLink = row[0].trim();
-            const title_en = row[1].trim();
-            const title_zh = row[2].trim();
-            const title_ja = row[3].trim();
+              const steamLink = row[0].trim();
+              const title_en = row[1].trim();
+              const title_zh = row[2].trim();
+              const title_ja = row[3].trim();
 
-            // 從 steamLink 擷取 AppID
-            // 假設連結格式例如：https://store.steampowered.com/app/620/Portal_2/
-            const regex = /\/app\/(\d+)\//;
-            const match = steamLink.match(regex);
-            if (!match) {
-              console.error("無法解析 Steam 連結:", steamLink);
+              // 從 steamLink 擷取 AppID
+              // 假設連結格式例如：https://store.steampowered.com/app/620/Portal_2/
+              const regex = /\/app\/(\d+)\//;
+              const match = steamLink.match(regex);
+              if (!match) {
+                console.error(
+                  `第 ${i + 1} 行無法解析 Steam 連結，將跳過：${steamLink}`
+                );
+                continue;
+              }
+              const appId = match[1];
+              // 根據 AppID 組合 library_capsule 圖片 URL
+              const imageUrl = `https://steamcdn-a.akamaihd.net/steam/apps/${appId}/library_600x900_2x.jpg`;
+
+              // 建立遊戲卡片的 DOM 結構
+              const cardDiv = document.createElement("div");
+              cardDiv.className = "game-card";
+
+              const aTag = document.createElement("a");
+              aTag.href = steamLink;
+              aTag.target = "_blank";
+              aTag.rel = "noopener noreferrer";
+              aTag.className =
+                "block overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300";
+
+              // 設定內部容器，保持 3:4 長寬比例
+              const innerDiv = document.createElement("div");
+              innerDiv.className = "relative aspect-[3/4]";
+
+              // 圖片元素
+              const imgTag = document.createElement("img");
+              imgTag.src = imageUrl;
+              imgTag.alt = title_en; // alt 文字以英文名稱為預設
+              imgTag.className = "object-cover w-full h-full";
+              innerDiv.appendChild(imgTag);
+
+              // 覆蓋層：顯示遊戲名稱
+              const overlayDiv = document.createElement("div");
+              overlayDiv.className =
+                "absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4";
+
+              const h2 = document.createElement("h2");
+              // 為標題設定 class 以便後續更新
+              h2.className = "game-title text-white text-xl font-medium";
+              // 將各語言的標題存入 data 屬性
+              h2.setAttribute("data-en", title_en);
+              h2.setAttribute("data-zh", title_zh);
+              h2.setAttribute("data-ja", title_ja);
+              // 初始顯示根據 currentLanguage
+              h2.textContent = h2.getAttribute("data-" + currentLanguage);
+
+              overlayDiv.appendChild(h2);
+              innerDiv.appendChild(overlayDiv);
+              aTag.appendChild(innerDiv);
+              cardDiv.appendChild(aTag);
+              grid.appendChild(cardDiv);
+            } catch (error) {
+              console.error(
+                `處理第 ${i + 1} 行資料時發生錯誤，將跳過該行：${lines[i]}`,
+                error
+              );
+              // 即使遇到錯誤也不影響後續資料的處理
               continue;
             }
-            const appId = match[1];
-            // 根據 AppID 組合 library_capsule 圖片 URL
-            const imageUrl = `https://steamcdn-a.akamaihd.net/steam/apps/${appId}/library_600x900_2x.jpg`;
-
-            // 建立遊戲卡片的 DOM 結構
-            const cardDiv = document.createElement("div");
-            cardDiv.className = "game-card";
-
-            const aTag = document.createElement("a");
-            aTag.href = steamLink;
-            aTag.target = "_blank";
-            aTag.rel = "noopener noreferrer";
-            aTag.className =
-              "block overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300";
-
-            // 設定內部容器，保持 3:4 長寬比例
-            const innerDiv = document.createElement("div");
-            innerDiv.className = "relative aspect-[3/4]";
-
-            // 圖片元素
-            const imgTag = document.createElement("img");
-            imgTag.src = imageUrl;
-            // alt 文字暫以英文名稱為預設
-            imgTag.alt = title_en;
-            imgTag.className = "object-cover w-full h-full";
-            innerDiv.appendChild(imgTag);
-
-            // 覆蓋層：顯示遊戲名稱
-            const overlayDiv = document.createElement("div");
-            overlayDiv.className =
-              "absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4";
-
-            const h2 = document.createElement("h2");
-            // 為標題設定 class 以便後續更新
-            h2.className = "game-title text-white text-xl font-medium";
-            // 將各語言的標題存入 data 屬性
-            h2.setAttribute("data-en", title_en);
-            h2.setAttribute("data-zh", title_zh);
-            h2.setAttribute("data-ja", title_ja);
-            // 初始顯示根據 currentLanguage
-            h2.textContent = h2.getAttribute("data-" + currentLanguage);
-
-            overlayDiv.appendChild(h2);
-            innerDiv.appendChild(overlayDiv);
-            aTag.appendChild(innerDiv);
-            cardDiv.appendChild(aTag);
-            grid.appendChild(cardDiv);
           }
 
           /**********************
