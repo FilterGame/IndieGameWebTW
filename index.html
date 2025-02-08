@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Team-Up!! Product</title>
+    <!-- 引入 Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      /* 卡片進場動畫：預設隱藏並下移 50px，進入視窗時淡入上移 */
+      .game-card {
+        opacity: 0;
+        transform: translateY(50px);
+        transition: opacity 0.5s ease, transform 0.5s ease;
+      }
+      .game-card.in-view {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      /* 圖片放大動畫：滑鼠經過時，圖片 0.5 秒內放大到 1.1 倍 */
+      .game-card img {
+        transition: transform 0.5s ease;
+      }
+      .game-card:hover img {
+        transform: scale(1.1);
+      }
+    </style>
+  </head>
+  <body class="min-h-screen bg-white">
+    <!-- Navigation -->
+    <nav class="bg-emerald-500 text-white">
+      <div class="max-w-7xl mx-auto px-4">
+        <ul class="flex items-center h-14 space-x-8">
+          <!-- 每個連結都加上 target="_blank" 及 rel="noopener noreferrer"，點擊後在新視窗開啟 -->
+          <li>
+            <a
+              href="https://www.facebook.com/FilterGame"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="hover:text-emerald-100"
+              >維護人:FilterGame</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://www.facebook.com/FilterGame"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="hover:text-emerald-100"
+              >参加方法</a
+            >
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 py-8">
+      <h1 class="text-4xl font-medium text-gray-800 mb-2">
+        台灣Steam遊戲列表
+      </h1>
+      <p class="text-gray-600 mb-8">
+        沒有投稿的遊戲.
+      </p>
+
+      <!-- 遊戲卡片容器 -->
+      <!-- 動態載入的遊戲卡將會加入到此容器中 -->
+      <div id="game-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      </div>
+    </main>
+
+    <!-- JavaScript 讀取 CSV 並建立遊戲卡 -->
+    <script>
+      // 使用 Fetch API 讀取與 index.html 同目錄下的 cards.csv
+      // CSV 檔案格式範例：
+      // title,link,image
+      // 聖銀の冒険者,https://example.com/game1,1.png
+      // Super Shaking Girl!!!,https://example.com/game2,2.png
+      // Lily & Ghost,https://example.com/game3,3.png
+      // ...
+      fetch('cards.csv')
+        .then((response) => response.text())
+        .then((text) => {
+          // 將 CSV 內容依行分割
+          const lines = text.trim().split('\n');
+          // 假設 CSV 的第一行為 header，從第二行開始處理資料
+          const grid = document.getElementById('game-grid');
+          for (let i = 1; i < lines.length; i++) {
+            // 使用簡單的以逗號分隔，注意：如欄位內有逗號則需改用專業 CSV parser
+            const row = lines[i].split(',');
+            // 提取各欄位資料（依序為：標題、連結、圖片路徑）
+            const title = row[0].trim();
+            const link = row[1].trim();
+            const image = row[2].trim();
+
+            // 建立卡片外層 div
+            const cardDiv = document.createElement('div');
+            cardDiv.className = 'game-card';
+
+            // 建立連結元素，點擊後在新分頁開啟
+            const aTag = document.createElement('a');
+            aTag.href = link;
+            aTag.target = '_blank';
+            aTag.rel = 'noopener noreferrer';
+            aTag.className =
+              'block overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300';
+
+            // 建立內部容器，設定長寬比例
+            const innerDiv = document.createElement('div');
+            innerDiv.className = 'relative aspect-[3/4]';
+
+            // 建立圖片元素
+            const imgTag = document.createElement('img');
+            imgTag.src = image;
+            imgTag.alt = title;
+            imgTag.className = 'object-cover w-full h-full';
+
+            // 將圖片加入內部容器
+            innerDiv.appendChild(imgTag);
+
+            // 建立覆蓋在圖片上方的標題區域
+            const overlayDiv = document.createElement('div');
+            overlayDiv.className =
+              'absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4';
+
+            const h2 = document.createElement('h2');
+            h2.className = 'text-white text-xl font-medium';
+            h2.textContent = title;
+
+            overlayDiv.appendChild(h2);
+            innerDiv.appendChild(overlayDiv);
+            aTag.appendChild(innerDiv);
+            cardDiv.appendChild(aTag);
+            grid.appendChild(cardDiv);
+          }
+
+          // 為新加入的所有遊戲卡使用 Intersection Observer 加入進場動畫
+          const observer = new IntersectionObserver(
+            (entries, obs) => {
+              entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                  entry.target.classList.add('in-view');
+                  obs.unobserve(entry.target);
+                }
+              });
+            },
+            { threshold: 0.1 }
+          );
+          document.querySelectorAll('.game-card').forEach((card) => {
+            observer.observe(card);
+          });
+        })
+        .catch((error) =>
+          console.error('讀取 CSV 檔案發生錯誤:', error)
+        );
+    </script>
+  </body>
+</html>
