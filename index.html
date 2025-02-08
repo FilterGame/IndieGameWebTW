@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>IndieTW - 台灣獨立遊戲列表</title>
+    <title>Steam 遊戲展示</title>
     <!-- 引入 Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-      /* 卡片進場動畫：預設隱藏並下移 50px，進入視窗時淡入上移 */
+      /* 卡片進場動畫：預設隱藏且下移 50px，進入視窗時淡入上移 */
       .game-card {
         opacity: 0;
         transform: translateY(50px);
@@ -17,115 +17,204 @@
         opacity: 1;
         transform: translateY(0);
       }
-      /* 圖片放大動畫：滑鼠經過時，圖片 0.5 秒內放大到 1.1 倍 */
+      /* 圖片放大動畫：滑鼠移入時，圖片 0.5 秒內放大到 1.1 倍 */
       .game-card img {
         transition: transform 0.5s ease;
       }
       .game-card:hover img {
         transform: scale(1.1);
       }
+      /* 語言切換按鈕樣式 */
+      .lang-btn {
+        background: transparent;
+        border: none;
+        color: white;
+        cursor: pointer;
+        font-size: 1rem;
+        padding: 0.25rem 0.5rem;
+      }
+      .lang-btn:hover {
+        text-decoration: underline;
+      }
     </style>
   </head>
   <body class="min-h-screen bg-white">
-    <!-- Navigation -->
+    <!-- Navigation 區域 -->
     <nav class="bg-emerald-500 text-white">
-      <div class="max-w-7xl mx-auto px-4">
-        <ul class="flex items-center h-14 space-x-8">
-          <!-- 每個連結都加上 target="_blank" 及 rel="noopener noreferrer"，點擊後在新視窗開啟 -->
-          <li>
-            <a
-              href="https://www.facebook.com/FilterGame"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="hover:text-emerald-100"
-              >維護人:FilterGame</a
-            >
-          </li>
-          <li>
-            <a
-              href="https://www.facebook.com/FilterGame"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="hover:text-emerald-100"
-              >参加方法</a
-            >
-          </li>
-        </ul>
+      <!-- 使用 flex 來左右分區，左邊為其他連結，右邊為語言切換按鈕 -->
+      <div class="max-w-7xl mx-auto px-4 flex justify-between items-center h-14">
+        <!-- 左側的導覽連結 -->
+        <div class="flex space-x-8">
+          <a
+            href="https://example.com/top"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="hover:text-emerald-100"
+            >トップページ</a
+          >
+          <a
+            href="https://example.com/teamup"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="hover:text-emerald-100"
+            >Team-Up!とは</a
+          >
+          <a
+            href="https://example.com/charm"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="hover:text-emerald-100"
+            >チームアップちゃん</a
+          >
+          <a
+            href="https://example.com/howto"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="hover:text-emerald-100"
+            >参加方法</a
+          >
+          <a
+            href="https://example.com/works"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="hover:text-emerald-100"
+            >作品一覧</a
+          >
+          <a
+            href="https://example.com/unityroom"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="hover:text-emerald-100"
+            >unityroom</a
+          >
+        </div>
+        <!-- 右側的語言切換按鈕 -->
+        <div id="language-switcher" class="flex space-x-4">
+          <!-- 按鈕的 data-lang 屬性代表語言代碼 -->
+          <button class="lang-btn" data-lang="zh">中文</button>
+          <button class="lang-btn" data-lang="en">English</button>
+          <button class="lang-btn" data-lang="ja">日本語</button>
+        </div>
       </div>
     </nav>
 
-    <!-- Main Content -->
+    <!-- Main Content 區域 -->
     <main class="max-w-7xl mx-auto px-4 py-8">
       <h1 class="text-4xl font-medium text-gray-800 mb-2">
-        台灣Steam遊戲列表
+        Steam 遊戲展示
       </h1>
       <p class="text-gray-600 mb-8">
-        沒有投稿的遊戲.
+        此頁面依據 CSV 中提供的資料產生遊戲卡片，並根據使用者瀏覽器語言及切換按鈕顯示對應語言的遊戲名稱。
       </p>
 
       <!-- 遊戲卡片容器 -->
-      <!-- 動態載入的遊戲卡將會加入到此容器中 -->
-      <div id="game-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      </div>
+      <div id="game-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
     </main>
 
-    <!-- JavaScript 讀取 CSV 並建立遊戲卡 -->
+    <!-- JavaScript 部分 -->
     <script>
-      // 使用 Fetch API 讀取與 index.html 同目錄下的 cards.csv
-      // CSV 檔案格式範例：
-      // title,link,image
-      // 聖銀の冒険者,https://example.com/game1,1.png
-      // Super Shaking Girl!!!,https://example.com/game2,2.png
-      // Lily & Ghost,https://example.com/game3,3.png
-      // ...
-      fetch('cards.csv')
+      /**********************
+       * 語言切換功能
+       **********************/
+      // 初始語言：依據瀏覽器語言設定
+      let currentLanguage = "en";
+      const navLang = navigator.language.toLowerCase();
+      if (navLang.startsWith("zh")) {
+        currentLanguage = "zh";
+      } else if (navLang.startsWith("ja")) {
+        currentLanguage = "ja";
+      }
+
+      // 當前語言設定好後，後續會用來更新每個遊戲卡片的標題
+      function updateCardTitles() {
+        // 對所有具有 .game-title 的 <h2> 元素進行更新
+        document.querySelectorAll(".game-title").forEach((h2) => {
+          const newText = h2.getAttribute("data-" + currentLanguage);
+          if (newText) {
+            h2.textContent = newText;
+          }
+        });
+      }
+
+      // 設定右上角的語言切換按鈕點擊事件
+      document.querySelectorAll(".lang-btn").forEach((btn) => {
+        btn.addEventListener("click", function () {
+          const lang = this.getAttribute("data-lang");
+          currentLanguage = lang;
+          updateCardTitles();
+        });
+      });
+
+      /**********************
+       * CSV 讀取及遊戲卡片建立
+       **********************/
+      // CSV 檔格式：steamLink,title_en,title_zh,title_ja
+      fetch("cards.csv")
         .then((response) => response.text())
         .then((text) => {
-          // 將 CSV 內容依行分割
-          const lines = text.trim().split('\n');
-          // 假設 CSV 的第一行為 header，從第二行開始處理資料
-          const grid = document.getElementById('game-grid');
+          const lines = text.trim().split("\n");
+          // 第一行為表頭，從第二行開始處理資料
+          const grid = document.getElementById("game-grid");
+
           for (let i = 1; i < lines.length; i++) {
-            // 使用簡單的以逗號分隔，注意：如欄位內有逗號則需改用專業 CSV parser
-            const row = lines[i].split(',');
-            // 提取各欄位資料（依序為：標題、連結、圖片路徑）
-            const title = row[0].trim();
-            const link = row[1].trim();
-            const image = row[2].trim();
+            // 用逗號分隔欄位，注意：若欄位內有逗號則需要使用更專業的 CSV 解析器
+            const row = lines[i].split(",");
+            if (row.length < 4) continue; // 如果欄位數不足則跳過
 
-            // 建立卡片外層 div
-            const cardDiv = document.createElement('div');
-            cardDiv.className = 'game-card';
+            const steamLink = row[0].trim();
+            const title_en = row[1].trim();
+            const title_zh = row[2].trim();
+            const title_ja = row[3].trim();
 
-            // 建立連結元素，點擊後在新分頁開啟
-            const aTag = document.createElement('a');
-            aTag.href = link;
-            aTag.target = '_blank';
-            aTag.rel = 'noopener noreferrer';
+            // 從 steamLink 擷取 AppID
+            // 假設連結格式例如：https://store.steampowered.com/app/620/Portal_2/
+            const regex = /\/app\/(\d+)\//;
+            const match = steamLink.match(regex);
+            if (!match) {
+              console.error("無法解析 Steam 連結:", steamLink);
+              continue;
+            }
+            const appId = match[1];
+            // 根據 AppID 組合 library_capsule 圖片 URL
+            const imageUrl = `https://steamcdn-a.akamaihd.net/steam/apps/${appId}/library_capsule.jpg`;
+
+            // 建立遊戲卡片的 DOM 結構
+            const cardDiv = document.createElement("div");
+            cardDiv.className = "game-card";
+
+            const aTag = document.createElement("a");
+            aTag.href = steamLink;
+            aTag.target = "_blank";
+            aTag.rel = "noopener noreferrer";
             aTag.className =
-              'block overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300';
+              "block overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300";
 
-            // 建立內部容器，設定長寬比例
-            const innerDiv = document.createElement('div');
-            innerDiv.className = 'relative aspect-[3/4]';
+            // 設定內部容器，保持 3:4 長寬比例
+            const innerDiv = document.createElement("div");
+            innerDiv.className = "relative aspect-[3/4]";
 
-            // 建立圖片元素
-            const imgTag = document.createElement('img');
-            imgTag.src = image;
-            imgTag.alt = title;
-            imgTag.className = 'object-cover w-full h-full';
-
-            // 將圖片加入內部容器
+            // 圖片元素
+            const imgTag = document.createElement("img");
+            imgTag.src = imageUrl;
+            // alt 文字暫以英文名稱為預設
+            imgTag.alt = title_en;
+            imgTag.className = "object-cover w-full h-full";
             innerDiv.appendChild(imgTag);
 
-            // 建立覆蓋在圖片上方的標題區域
-            const overlayDiv = document.createElement('div');
+            // 覆蓋層：顯示遊戲名稱
+            const overlayDiv = document.createElement("div");
             overlayDiv.className =
-              'absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4';
+              "absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4";
 
-            const h2 = document.createElement('h2');
-            h2.className = 'text-white text-xl font-medium';
-            h2.textContent = title;
+            const h2 = document.createElement("h2");
+            // 為標題設定 class 以便後續更新
+            h2.className = "game-title text-white text-xl font-medium";
+            // 將各語言的標題存入 data 屬性
+            h2.setAttribute("data-en", title_en);
+            h2.setAttribute("data-zh", title_zh);
+            h2.setAttribute("data-ja", title_ja);
+            // 初始顯示根據 currentLanguage
+            h2.textContent = h2.getAttribute("data-" + currentLanguage);
 
             overlayDiv.appendChild(h2);
             innerDiv.appendChild(overlayDiv);
@@ -134,24 +223,26 @@
             grid.appendChild(cardDiv);
           }
 
-          // 為新加入的所有遊戲卡使用 Intersection Observer 加入進場動畫
+          /**********************
+           * Intersection Observer 動畫
+           **********************/
           const observer = new IntersectionObserver(
             (entries, obs) => {
               entries.forEach((entry) => {
                 if (entry.isIntersecting) {
-                  entry.target.classList.add('in-view');
+                  entry.target.classList.add("in-view");
                   obs.unobserve(entry.target);
                 }
               });
             },
             { threshold: 0.1 }
           );
-          document.querySelectorAll('.game-card').forEach((card) => {
+          document.querySelectorAll(".game-card").forEach((card) => {
             observer.observe(card);
           });
         })
         .catch((error) =>
-          console.error('讀取 CSV 檔案發生錯誤:', error)
+          console.error("讀取 CSV 檔案發生錯誤:", error)
         );
     </script>
   </body>
