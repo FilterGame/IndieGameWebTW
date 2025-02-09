@@ -15,6 +15,12 @@
     <!-- 引入 Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+      /* 新增：針對有凹槽的行動裝置（如 iPhone）增加安全區間 (safe area) 的頂部間距 */
+      nav {
+        padding-top: calc(env(safe-area-inset-top, 0px) + 0.5rem);
+        padding-bottom: 0.5rem;
+      }
+      
       /* 卡片進場動畫：預設隱藏且下移 50px，進入視窗時淡入上移 */
       .game-card {
         opacity: 0;
@@ -61,9 +67,9 @@
   <body class="min-h-screen bg-white">
     <!-- 固定在最上方的 Navigation 區域 -->
     <nav class="bg-emerald-500 text-white sticky top-0 z-50">
-      <!-- 使用 flex 分左右區：左側為導覽連結，右側為語言切換按鈕 -->
-      <div class="max-w-7xl mx-auto px-4 flex justify-between items-center h-14">
-        <!-- 左側導覽連結，並加入 data-navtext 與翻譯屬性 -->
+      <!-- 使用 flex-col 在手機上排列，md 以上則水平排列 -->
+      <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center">
+        <!-- 左側導覽連結 -->
         <div class="flex space-x-8">
           <a
             href="https://www.facebook.com/FilterGame"
@@ -97,9 +103,8 @@
           >Discord</a>
         </div>
 
-
-        <!-- 右側語言切換按鈕 -->
-        <div id="language-switcher" class="flex space-x-4">
+        <!-- 右側語言切換按鈕（在手機上增加上邊距） -->
+        <div id="language-switcher" class="flex space-x-4 mt-2 md:mt-0">
           <button class="lang-btn" data-lang="zh">中文</button>
           <button class="lang-btn" data-lang="en">English</button>
           <button class="lang-btn" data-lang="ja">日本語</button>
@@ -107,9 +112,8 @@
       </div>
     </nav>
 
-    <!-- 固定在頂部下方的 CSV 選擇按鈕區 -->
-    <div id="csv-buttons" class="max-w-7xl mx-auto px-4 py-2 flex space-x-4 sticky top-14 z-50">
-      <!-- 每個按鈕的 data-csv 屬性指定 CSV 檔案名稱，並加入 data-navtext 與翻譯屬性 -->
+    <!-- 固定在頂部下方的 CSV 按鈕區 -->
+    <div id="csv-buttons" class="max-w-7xl mx-auto px-4 py-2 flex flex-col md:flex-row gap-4 md:space-x-4 md:sticky md:top-14 z-50">
       <button class="csv-btn" data-csv="cards.csv" data-navtext data-en="2025 Taipei Game Show - Taiwan Games" data-zh="2025台北電玩展-台灣遊戲列表" data-ja="2025台ペイゲームショー - 台湾ゲーム一覧">
         2025台北電玩展-台灣遊戲列表
       </button>
@@ -119,24 +123,19 @@
       <button class="csv-btn" data-csv="cards3.csv" data-random="true" data-navtext data-en="Overseas Partner Steam List" data-zh="海外友商steam列表" data-ja="海外パートナーSteamリスト">
         海外友商steam列表
       </button>
-      <!-- 若需隨機排序，請在該按鈕內加上 data-random="true" 屬性 -->
-      <!-- 例如：<button class="csv-btn" data-csv="cards4.csv" data-random="true" ...>隨機列表</button> -->
     </div>
 
     <!-- Main Content 區域 -->
     <main class="max-w-7xl mx-auto px-4 py-8">
-      <!-- 此標題將根據目前選擇的 CSV 按鈕動態顯示 -->
       <h1 id="page-title" class="text-4xl font-medium text-gray-800 mb-2"></h1>
-      <!-- 遊戲卡片容器 -->
       <div id="game-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
     </main>
 
-    <!-- JavaScript 部分 -->
+    <!-- JavaScript 程式碼（內容保持不變） -->
     <script>
       /**********************
        * 語言切換功能
        **********************/
-      // 根據瀏覽器語言決定預設語言
       let currentLanguage = "en";
       const navLang = navigator.language.toLowerCase();
       if (navLang.startsWith("zh")) {
@@ -144,31 +143,22 @@
       } else if (navLang.startsWith("ja")) {
         currentLanguage = "ja";
       }
-      
-      // 儲存目前選取的 CSV 按鈕，預設為第一個 CSV 按鈕（稍後在 CSV 按鈕事件中設定）
       let currentCSVButton = null;
-      
-      // 更新所有遊戲卡片標題及所有 data-navtext 元素（導覽、CSV 按鈕）的文字
       function updateCardTitles() {
-        // 更新遊戲卡片標題
         document.querySelectorAll(".game-title").forEach((h2) => {
           const newText = h2.getAttribute("data-" + currentLanguage);
           if (newText) {
             h2.textContent = newText;
           }
         });
-        // 更新所有具有 data-navtext 的元素（例如：導覽連結與 CSV 按鈕）
         document.querySelectorAll("[data-navtext]").forEach((el) => {
           const newText = el.getAttribute("data-" + currentLanguage);
           if (newText) {
             el.textContent = newText;
           }
         });
-        // 更新頁面標題（依據目前選擇的 CSV 按鈕）
         updatePageTitle();
       }
-      
-      // 更新頁面標題：顯示目前 CSV 按鈕的翻譯文字
       function updatePageTitle() {
         if (currentCSVButton) {
           const titleText = currentCSVButton.getAttribute("data-" + currentLanguage);
@@ -178,8 +168,6 @@
           }
         }
       }
-      
-      // 語言切換按鈕事件
       document.querySelectorAll(".lang-btn").forEach((btn) => {
         btn.addEventListener("click", function () {
           currentLanguage = this.getAttribute("data-lang");
@@ -188,17 +176,15 @@
       });
 
       /**********************
-       * CSV 讀取及遊戲卡片建立（含防呆機制與隨機功能）
+       * CSV 讀取及遊戲卡片建立
        **********************/
       function loadCSV(csvFile) {
         const grid = document.getElementById("game-grid");
-        // 清除目前的卡片
         grid.innerHTML = "";
         fetch(csvFile)
           .then((response) => response.text())
           .then((text) => {
             const lines = text.trim().split("\n");
-            // 第一行為表頭，從第二行開始處理資料
             let rows = [];
             for (let i = 1; i < lines.length; i++) {
               try {
@@ -213,17 +199,14 @@
                 continue;
               }
             }
-            // 若當前 CSV 按鈕有設定 data-random="true"，則隨機排序 rows
             if (currentCSVButton && currentCSVButton.getAttribute("data-random") === "true") {
               rows.sort(() => Math.random() - 0.5);
             }
-            // 建立遊戲卡片
             rows.forEach((row, index) => {
               const steamLink = row[0].trim();
               const title_en = row[1].trim();
               const title_zh = row[2].trim();
               const title_ja = row[3].trim();
-              // 從 steamLink 擷取 AppID（例如：https://store.steampowered.com/app/620/Portal_2/）
               const regex = /\/app\/(\d+)\//;
               const match = steamLink.match(regex);
               if (!match) {
@@ -231,9 +214,7 @@
                 return;
               }
               const appId = match[1];
-              // 組合 library_capsule 圖片 URL
               const imageUrl = `https://steamcdn-a.akamaihd.net/steam/apps/${appId}/library_600x900_2x.jpg`;
-              // 建立遊戲卡片 DOM 結構
               const cardDiv = document.createElement("div");
               cardDiv.className = "game-card";
               const aTag = document.createElement("a");
@@ -241,16 +222,13 @@
               aTag.target = "_blank";
               aTag.rel = "noopener noreferrer";
               aTag.className = "block overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300";
-              // 內部容器設定 3:4 長寬比例
               const innerDiv = document.createElement("div");
               innerDiv.className = "relative aspect-[3/4]";
-              // 圖片元素
               const imgTag = document.createElement("img");
               imgTag.src = imageUrl;
-              imgTag.alt = title_en; // alt 預設為英文標題
+              imgTag.alt = title_en;
               imgTag.className = "object-cover w-full h-full";
               innerDiv.appendChild(imgTag);
-              // 覆蓋層，顯示遊戲名稱
               const overlayDiv = document.createElement("div");
               overlayDiv.className = "absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-4";
               const h2 = document.createElement("h2");
@@ -265,7 +243,6 @@
               cardDiv.appendChild(aTag);
               grid.appendChild(cardDiv);
             });
-            // 設定 Intersection Observer 以實現進場動畫
             const observer = new IntersectionObserver(
               (entries, obs) => {
                 entries.forEach((entry) => {
@@ -284,26 +261,19 @@
           .catch((error) => console.error("讀取 CSV 檔案發生錯誤:", error));
       }
 
-      // CSV 按鈕事件（多個按鈕皆支援）
       document.querySelectorAll(".csv-btn").forEach((btn, idx) => {
         btn.addEventListener("click", function () {
-          // 先將所有 CSV 按鈕還原成預設藍色
           document.querySelectorAll(".csv-btn").forEach((btn) => {
             btn.style.backgroundColor = "#3b82f6";
           });
-          // 將被點選的按鈕背景設為紅色表示「顯示中」
           this.style.backgroundColor = "red";
-          // 更新目前選取的 CSV 按鈕
           currentCSVButton = this;
-          // 讀取該 CSV 檔案
           const csvFile = this.getAttribute("data-csv");
           loadCSV(csvFile);
-          // 更新頁面標題
           updatePageTitle();
         });
       });
 
-      // 頁面初始時，預設選取第一個 CSV 按鈕並載入對應 CSV
       window.addEventListener("DOMContentLoaded", () => {
         const firstCsvBtn = document.querySelector(".csv-btn");
         if (firstCsvBtn) {
