@@ -16,8 +16,17 @@
 - 📆 **展覽活動整理**（未來規劃）
 
 ## 📁 專案架構
-IndieGameWebTW/ │── data/ # 遊戲數據資料夾 │ ├── cards.csv # 2025台北電玩展-台灣遊戲列表 │ ├── cards2.csv # 台灣國產Steam遊戲-研發中列表 │ ├── cards3.csv # 海外友商Steam列表 │ ├── cards4.csv # 台灣國產Steam遊戲-已發售列表 │── src/ # 網站前端程式碼 │── assets/ # 圖片與靜態資源 │── index.html # 網站首頁 │── README.md # 專案說明文件 │── LICENSE # 開源授權文件
+'''
+project-root
+├── image
+├── README.md
+├── cards.csv (2025 台北電玩展 - 台灣遊戲列表)
+├── cards2.csv (台灣國產 Steam 遊戲 - 研發中列表)
+├── cards3.csv (海外友商 Steam 列表)
+├── cards4.csv (台灣國產 Steam 遊戲 - 已發售列表)
+└── index.html
 
+'''
 ## 🤝 歡迎參與
 目前遊戲資料仍在持續補充，若有缺少的遊戲，歡迎透過登錄表單提交，也期待大家提供建議或分享此專案，一起推廣 **台灣獨立遊戲**！ 🎮✨
 
