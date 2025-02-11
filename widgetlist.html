@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>Steam Widget 無縫滾動 + CSV 與滑鼠效果</title>
+  <style>
+    /* 基本重置與背景設定 */
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: #111;
+    }
+    /* 每一列容器：固定高度且超出部分隱藏 */
+    .row {
+      position: relative;
+      width: 100%;
+      height: 190px; /* 與 widget 高度一致 */
+      overflow: hidden;
+    }
+    /* 滾動容器採用 flex 排列 */
+    .scroller {
+      display: flex;
+    }
+    /* 每個 widget 的容器：預設半透明，並有 0.5 秒過渡動畫 */
+    .widget-container {
+      opacity: 0.5;
+      transition: opacity 0.5s ease;
+      display: inline-block;
+    }
+    /* 滑鼠進入時改為不透明 */
+    .widget-container.hovered {
+      opacity: 1;
+    }
+    /* 中央 overlay 文字 */
+    #overlayText {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1000;
+      font-size: 2em;
+      font-weight: bold;
+      color: white;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- 畫面中央的 overlay 文字 -->
+  <div id="overlayText">隨機台灣國產遊戲出沒中!!</div>
+  <script>
+    (function() {
+      // 定義 widget 的尺寸（依 Steam widget 提供的尺寸）
+      const widgetWidth = 646;
+      const widgetHeight = 190;
+      
+      // 根據視窗高度計算需要的列數（每列高度為 widgetHeight）
+      const numRows = Math.ceil(window.innerHeight / widgetHeight);
+      // 每列產生的 widget 數量：確保單份內容寬度至少超過 2×視窗寬度
+      const widgetsPerCopy = Math.ceil((2 * window.innerWidth) / widgetWidth) + 1;
+      
+      // CSV 資料儲存區與目前資料索引（依序取用，若用完則循環）
+      let csvData = [];
+      let dataIndex = 0;
+      
+      // 輔助函式：從 steamLink 中擷取 /app/ 後的數字 ID
+      function extractAppId(link) {
+        const match = link.match(/\/app\/(\d+)\//);
+        return match ? match[1] : null;
+      }
+      
+      // 依序取得 CSV 中的 steam widget URL（若資料不夠，則循環使用）
+      function getNextWidgetUrl() {
+        if (csvData.length === 0) {
+          return "https://store.steampowered.com/widget/2325390/";
+        }
+        const record = csvData[dataIndex];
+        dataIndex = (dataIndex + 1) % csvData.length;
+        const appId = extractAppId(record.steamLink);
+        return appId 
+          ? "https://store.steampowered.com/widget/" + appId + "/"
+          : "https://store.steampowered.com/widget/2330650/";
+      }
+      
+      // 建立一個 widget 元件（包含 iframe 與滑鼠事件）
+      function createWidget() {
+        const widgetContainer = document.createElement('div');
+        widgetContainer.className = 'widget-container';
+        widgetContainer.style.width = widgetWidth + 'px';
+        widgetContainer.style.height = widgetHeight + 'px';
+        // 滑鼠事件：進入時加入 .hovered，離開時移除
+        widgetContainer.addEventListener('mouseenter', function() {
+          widgetContainer.classList.add('hovered');
+        });
+        widgetContainer.addEventListener('mouseleave', function() {
+          widgetContainer.classList.remove('hovered');
+        });
+        // 建立 iframe，設定正確的 steam widget URL
+        const iframe = document.createElement('iframe');
+        iframe.src = getNextWidgetUrl();
+        iframe.setAttribute('frameborder', '0');
+        iframe.width = widgetWidth;
+        iframe.height = widgetHeight;
+        // 為讓滑鼠事件由容器接收，將 iframe 的 pointer-events 關閉
+        iframe.style.pointerEvents = 'none';
+        widgetContainer.appendChild(iframe);
+        return widgetContainer;
+      }
+      
+      // 建立一份內容容器，內含 widgetsPerCopy 個 widget 元件
+      function createContent() {
+        const content = document.createElement('div');
+        content.style.display = 'flex';
+        for (let j = 0; j < widgetsPerCopy; j++) {
+          content.appendChild(createWidget());
+        }
+        return content;
+      }
+      
+      // 用來存放每一列的滾動動畫資訊
+      const marqueeRows = [];
+      
+      // 讀取並解析同目錄下的 CSV 檔案
+      fetch('cards4.csv')
+        .then(response => response.text())
+        .then(csvText => {
+          const lines = csvText.trim().split('\n');
+          if (lines.length < 2) {
+            console.error("CSV 檔案資料不足");
+            return;
+          }
+          // 第一行為標題，從第二行開始解析
+          const dataRows = lines.slice(1).filter(line => line.trim() !== '');
+          csvData = dataRows.map(line => {
+            const parts = line.split(',');
+            return {
+              steamLink: parts[0].trim(),
+              title_en: parts[1] ? parts[1].trim() : '',
+              title_zh: parts[2] ? parts[2].trim() : '',
+              title_ja: parts[3] ? parts[3].trim() : ''
+            };
+          });
+          
+          // 為每一列建立滾動內容
+          for (let i = 0; i < numRows; i++) {
+            // 建立 row 容器
+            const row = document.createElement('div');
+            row.className = 'row';
+            
+            // 建立 scroller 容器，後續用來做水平位移
+            const scroller = document.createElement('div');
+            scroller.className = 'scroller';
+            
+            // 建立單份內容（內容寬度至少超過 2×視窗寬度）
+            const content = createContent();
+            // 複製一份內容，兩份連在一起達成無縫循環效果
+            const contentClone = content.cloneNode(true);
+            scroller.appendChild(content);
+            scroller.appendChild(contentClone);
+            
+            // 將 scroller 放入 row，再加入文件
+            row.appendChild(scroller);
+            document.body.appendChild(row);
+            
+            // 取得單份內容的寬度（用以判斷重置條件）
+            const contentWidth = content.offsetWidth;
+            
+            // 設定本列移動方向：偶數列向左 (-1)，奇數列向右 (+1)
+            const direction = (i % 2 === 0) ? -1 : 1;
+            // 設定每次更新移動的像素數（可依需求調整速度）
+            const speed = 1; // 每幀移動 1 pixel
+            
+            // 將本列的動畫資訊儲存起來
+            marqueeRows.push({
+              scroller: scroller,
+              offset: 0,
+              direction: direction,
+              speed: speed,
+              contentWidth: contentWidth
+            });
+          }
+          
+          // 啟動動畫迴圈
+          requestAnimationFrame(animate);
+        })
+        .catch(err => {
+          console.error("載入 CSV 檔案失敗:", err);
+        });
+      
+      // 動畫迴圈：每次更新各列的 scroller transform
+      function animate() {
+        marqueeRows.forEach(function(row) {
+          // 更新位移值
+          row.offset += row.direction * row.speed;
+          // 若向左移動且 offset 小於等於 -contentWidth，則重置 offset
+          if (row.direction < 0 && row.offset <= -row.contentWidth) {
+            row.offset += row.contentWidth;
+          }
+          // 若向右移動且 offset 大於等於 contentWidth，則重置 offset
+          if (row.direction > 0 && row.offset >= row.contentWidth) {
+            row.offset -= row.contentWidth;
+          }
+          // 更新 scroller 的 transform
+          row.scroller.style.transform = 'translateX(' + row.offset + 'px)';
+        });
+        requestAnimationFrame(animate);
+      }
+      
+    })();
+  </script>
+</body>
+</html>
