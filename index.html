@@ -62,6 +62,36 @@
       .csv-btn:hover {
         background: #2563eb;
       }
+      /* Modal overlay 與內容 */
+      #modal-overlay {
+        position: fixed;
+        inset: 0;
+        background-color: rgba(0, 0, 0, 0.75);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 100;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.5s ease, visibility 0.5s ease;
+      }
+      #modal-overlay.active {
+        opacity: 1;
+        visibility: visible;
+      }
+      #modal-content {
+        color: white;
+        font-weight: bold;
+        font-size: 2rem;
+        text-align: center;
+        padding: 1rem;
+        transition: opacity 0.5s ease;
+    	  white-space: pre-wrap;  /* 允許換行符號 */
+      }
+      /* Modal內容淡出 */
+      #modal-overlay.closing #modal-content {
+        opacity: 0;
+      }
     </style>
   </head>
   <body class="min-h-screen bg-white">
@@ -101,6 +131,16 @@
             data-zh="Discord"
             data-ja="Discord"
           >Discord</a>
+          <!-- 新增更新履歷&說明按鈕，並加入翻譯屬性 -->
+          <a
+            href="#"
+            id="update-modal-btn"
+            class="hover:text-emerald-100"
+            data-navtext
+            data-en="Update Resume & Info"
+            data-zh="更新履歷&說明"
+            data-ja="更新履歴＆説明"
+          >更新履歷&說明</a>
         </div>
 
         <!-- 右側語言切換按鈕（在手機上增加上邊距） -->
@@ -120,10 +160,9 @@
       <button class="csv-btn" data-csv="cards2.csv" data-random="true" data-navtext data-en="Taiwan Domestic Steam Games - In Development" data-zh="台灣國產steam遊戲-研發中列表" data-ja="台湾国内Steamゲーム - 開発中リスト">
         台灣國產steam遊戲-研發中列表
       </button>
-	  <button class="csv-btn" data-csv="cards4.csv" data-random="true" data-navtext data-en="Taiwanese Steam Games - Released List (Feel free to add more!)" data-zh="台灣國產steam遊戲-已發售列表(歡迎補充)" data-ja="台湾産Steamゲーム - 発売済みリスト（追加歓迎！）">
+      <button class="csv-btn" data-csv="cards4.csv" data-random="true" data-navtext data-en="Taiwanese Steam Games - Released List (Feel free to add more!)" data-zh="台灣國產steam遊戲-已發售列表(歡迎補充)" data-ja="台湾産Steamゲーム - 発売済みリスト（追加歓迎！）">
         台灣國產steam遊戲-已發售列表(歡迎補充)
       </button>
-
       <button class="csv-btn" data-csv="cards3.csv" data-random="true" data-navtext data-en="Overseas Partner Steam List" data-zh="海外友商steam列表" data-ja="海外パートナーSteamリスト">
         海外友商steam列表
       </button>
@@ -131,11 +170,24 @@
 
     <!-- Main Content 區域 -->
     <main class="max-w-7xl mx-auto px-4 py-8">
+      <!-- 動態標題：根據目前 CSV 按鈕的翻譯文字更新 -->
       <h1 id="page-title" class="text-4xl font-medium text-gray-800 mb-2"></h1>
       <div id="game-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
     </main>
 
-    <!-- JavaScript 程式碼（內容保持不變） -->
+    <!-- Modal Overlay (初始隱藏) -->
+    <div id="modal-overlay">
+      <div 
+        id="modal-content" 
+        data-navtext 
+        data-en="Hello everyone! This is KO from FilterGame ＼(^ω^＼) <br> Since I’ve received a lot of feedback and messages, I’d like to clarify a few things here.<br><br>1.Only Steam games are eligible for listing.<br>2.Adult games are not currently accepted.<br>3.Some older Steam games cannot be listed yet due to missing images.<br>4.UTM tracking is not supported at the moment.<br>5.The website will continue in its current format for a while,serving as a game listing platform.<br>6.Steam game submissions are welcome!<br>Submitted games will be added to the list more quickly.<br><br>Thank you all for your support!" 
+        data-zh="大家好,這裡是FilterGame的KO ＼(^ω^＼) <br> 因為收到很多的意見與來信,這邊做一個統一說明<br><br> 1.收錄必須是steam遊戲<br> 2.目前沒有收成人遊戲<br> 3.有些過早的steam遊戲因為缺乏圖片無法顯示暫時無法收入<br> 4.utm功能暫時不支援<br> 5.網站會維持現在的方式一段時間,以遊戲清單的方式給大家服務<br> 6.歡迎大家提交steam遊戲,提交的遊戲會比較快出現<br><br>感謝大家的支持" 
+        data-ja="皆さん、こんにちは！FilterGameのKOです ＼(^ω^＼)<br>たくさんのご意見やお問い合わせをいただいたので、こちらでまとめて説明します。<br><br>1.登録対象はSteamゲームのみ です。<br>2.現在、アダルトゲームは収録していません。<br>3.古いSteamゲーム の中には、画像が不足しているため表示できず、その関係で一時的に登録できないものもあります。<br>4.UTM機能は現在サポートしていません。<br>5.サイトは しばらく現状の形 で運営し、<br>ゲームリストとしてサービスを提供していきます。<br>6.Steamゲームの登録を歓迎しています！提出されたゲームは優先的にリストへ反映されます。<br><br>皆さんのご支援に感謝します！">
+        大家好,這裡是FilterGame的KO ＼(^ω^＼) <br> 因為收到很多的意見與來信,這邊做一個統一說明<br><br> 1.收錄必須是steam遊戲<br> 2.目前沒有收成人遊戲<br> 3.有些過早的steam遊戲因為缺乏圖片無法顯示暫時無法收入<br> 4.utm功能暫時不支援<br> 5.網站會維持現在的方式一段時間,以遊戲清單的方式給大家服務<br> 6.歡迎大家提交steam遊戲,提交的遊戲會比較快出現<br><br>感謝大家的支持
+      </div>
+    </div>
+
+    <!-- JavaScript 程式碼 -->
     <script>
       /**********************
        * 語言切換功能
@@ -157,9 +209,14 @@
         });
         document.querySelectorAll("[data-navtext]").forEach((el) => {
           const newText = el.getAttribute("data-" + currentLanguage);
-          if (newText) {
-            el.textContent = newText;
-          }
+		  if (newText) {
+			// 如果這個元素的 id 是 modal-content，就用 innerHTML（解析 <br> 標籤）
+			if (el.id === "modal-content") {
+			  el.innerHTML = newText;
+			} else {
+			  el.textContent = newText;
+			}
+		  }
         });
         updatePageTitle();
       }
@@ -180,12 +237,12 @@
       });
 
       /**********************
-       * CSV 讀取及遊戲卡片建立
+       * CSV 讀取及遊戲卡片建立（含防呆與隨機功能）
        **********************/
       function loadCSV(csvFile) {
         const grid = document.getElementById("game-grid");
         grid.innerHTML = "";
-        fetch(csvFile)
+        fetch(csvFile + "?v=" + Date.now())
           .then((response) => response.text())
           .then((text) => {
             const lines = text.trim().split("\n");
@@ -265,7 +322,7 @@
           .catch((error) => console.error("讀取 CSV 檔案發生錯誤:", error));
       }
 
-      document.querySelectorAll(".csv-btn").forEach((btn, idx) => {
+      document.querySelectorAll(".csv-btn").forEach((btn) => {
         btn.addEventListener("click", function () {
           document.querySelectorAll(".csv-btn").forEach((btn) => {
             btn.style.backgroundColor = "#3b82f6";
@@ -286,6 +343,25 @@
           loadCSV(firstCsvBtn.getAttribute("data-csv"));
           updatePageTitle();
         }
+      });
+
+      /**********************
+       * Modal (更新履歷&說明) 功能
+       **********************/
+      const modalOverlay = document.getElementById("modal-overlay");
+      const updateModalBtn = document.getElementById("update-modal-btn");
+      updateModalBtn.addEventListener("click", function(e) {
+        e.preventDefault();
+        // 顯示 modal overlay (加入 active class觸發淡入)
+        modalOverlay.classList.add("active");
+      });
+      // 點擊 overlay 任意位置關閉 modal (先觸發內容淡出，等待 0.5秒後關閉)
+      modalOverlay.addEventListener("click", function() {
+        modalOverlay.classList.add("closing");
+        setTimeout(() => {
+          modalOverlay.classList.remove("active");
+          modalOverlay.classList.remove("closing");
+        }, 500);
       });
     </script>
   </body>
