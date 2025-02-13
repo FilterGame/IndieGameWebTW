@@ -222,6 +222,12 @@
       } else if (navLang.startsWith("ja")) {
         currentLanguage = "ja";
       }
+	  function clearDanmaku() {
+		  const container = document.getElementById("danmaku-container");
+		  if (container) {
+			container.innerHTML = "";
+		  }
+		}
       let currentCSVButton = null;
       function updateCardTitles() {
         document.querySelectorAll(".game-title").forEach((h2) => {
@@ -355,6 +361,7 @@
           const csvFile = this.getAttribute("data-csv");
           loadCSV(csvFile);
           updatePageTitle();
+	      clearDanmaku();
         });
       });
 
