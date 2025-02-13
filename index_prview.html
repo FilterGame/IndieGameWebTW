@@ -16,10 +16,12 @@
     <!-- 引入 Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-      /* 重設 margin 與 padding，避免預設樣式影響 */
+      /* 為 html 與 body 設定明確的高度與寬度，並重設 margin/padding */
       html, body {
         margin: 0;
         padding: 0;
+        height: 100%;
+        width: 100%;
         overflow-x: hidden;
       }
 
@@ -46,6 +48,7 @@
       .game-card:hover img {
         transform: scale(1.1);
       }
+      
       /* 語言切換按鈕 */
       .lang-btn {
         background: transparent;
@@ -58,6 +61,7 @@
       .lang-btn:hover {
         text-decoration: underline;
       }
+      
       /* CSV 按鈕 */
       .csv-btn {
         background: #3b82f6;
@@ -70,25 +74,24 @@
       .csv-btn:hover {
         background: #2563eb;
       }
-      /* Modal overlay 與內容
-         注意：預設時利用 display: none 隱藏，避免產生內部滾動條 */
+      
+      /* Modal overlay 與內容 */
       #modal-overlay {
-        display: none;
         position: fixed;
         inset: 0;
         background-color: rgba(0, 0, 0, 0.75);
+        display: flex;
         align-items: center;
         justify-content: center;
         z-index: 100;
         opacity: 0;
         visibility: hidden;
         transition: opacity 0.5s ease, visibility 0.5s ease;
+        overflow-y: auto; /* 溢出處理方式調整 */
       }
       #modal-overlay.active {
-        display: flex;
         opacity: 1;
         visibility: visible;
-        overflow-y: auto;
       }
       #modal-content {
         color: white;
@@ -101,6 +104,21 @@
       }
       #modal-overlay.closing #modal-content {
         opacity: 0;
+      }
+      
+      /* 明確尺寸控制：為 game-grid 與 main 區域設定 */
+      #game-grid {
+        min-height: 0;
+        width: 100%;
+      }
+      main {
+        width: 100%;
+        position: relative;
+        overflow: visible;
+      }
+      /* 確保彈幕容器不影響捲動 */
+      #danmaku-container {
+        overflow: hidden;
       }
       
       /* ===== 彈幕樣式 ===== */
@@ -117,10 +135,10 @@
         white-space: nowrap;
         font-weight: bold;
         color: white;
-        font-size: 2rem;
+        font-size: 1.25rem;
         text-shadow: -2px -2px 0 black, 2px -2px 0 black, -2px 2px 0 black, 2px 2px 0 black;
         pointer-events: none;
-        animation: danmaku-move 20s linear forwards;
+        animation: danmaku-move 15s linear forwards;
       }
     </style>
   </head>
@@ -163,7 +181,7 @@
     <!-- 將彈幕容器移至 body 固定定位 -->
     <div id="danmaku-container" class="pointer-events-none fixed inset-0 z-10"></div>
 
-    <!-- Modal Overlay (隱藏時用 display: none) -->
+    <!-- Modal Overlay -->
     <div id="modal-overlay">
       <div 
         id="modal-content" 
@@ -419,7 +437,7 @@
           if (msg) {
             createDanmaku(msg);
           }
-        }, 2100);
+        }, 4200);
       }
 
       function stopDanmakuInterval() {
