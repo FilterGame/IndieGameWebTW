@@ -70,24 +70,25 @@
       .csv-btn:hover {
         background: #2563eb;
       }
-      /* Modal overlay 與內容 */
+      /* Modal overlay 與內容
+         注意：預設時利用 display: none 隱藏，避免產生內部滾動條 */
       #modal-overlay {
+        display: none;
         position: fixed;
         inset: 0;
         background-color: rgba(0, 0, 0, 0.75);
-        display: flex;
         align-items: center;
         justify-content: center;
         z-index: 100;
         opacity: 0;
         visibility: hidden;
         transition: opacity 0.5s ease, visibility 0.5s ease;
-        overflow: hidden; /* 預設隱藏內部捲軸 */
       }
       #modal-overlay.active {
+        display: flex;
         opacity: 1;
         visibility: visible;
-        overflow-y: auto; /* active 時允許內部捲動 */
+        overflow-y: auto;
       }
       #modal-content {
         color: white;
@@ -159,10 +160,10 @@
       <div id="game-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4"></div>
     </main>
 
-    <!-- 將彈幕容器移至 body 的固定定位 -->
+    <!-- 將彈幕容器移至 body 固定定位 -->
     <div id="danmaku-container" class="pointer-events-none fixed inset-0 z-10"></div>
 
-    <!-- Modal Overlay -->
+    <!-- Modal Overlay (隱藏時用 display: none) -->
     <div id="modal-overlay">
       <div 
         id="modal-content" 
