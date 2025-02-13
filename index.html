@@ -15,6 +15,11 @@
     <!-- 引入 Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+      /* 防止彈幕造成水平拉伸 */
+      html, body {
+        overflow-x: hidden;
+      }
+
       /* 新增：針對有凹槽的行動裝置（如 iPhone）增加安全區間 (safe area) 的頂部間距 */
       nav {
         padding-top: calc(env(safe-area-inset-top, 0px) + 0.5rem);
@@ -86,11 +91,32 @@
         text-align: center;
         padding: 1rem;
         transition: opacity 0.5s ease;
-    	  white-space: pre-wrap;  /* 允許換行符號 */
+        white-space: pre-wrap;  /* 允許換行符號 */
       }
       /* Modal內容淡出 */
       #modal-overlay.closing #modal-content {
         opacity: 0;
+      }
+      
+      /* ===== 新增：彈幕樣式 ===== */
+      @keyframes danmaku-move {
+        from {
+          transform: translateX(100vw);
+        }
+        to {
+          transform: translateX(-100vw);
+        }
+      }
+      .danmaku-item {
+        position: absolute;
+        white-space: nowrap;
+        font-weight: bold;
+        color: white;
+        font-size: 2rem; /* 文字大小：原來的2倍 */
+        /* 調整描邊偏移：從 1px 調整為 2px */
+        text-shadow: -2px -2px 0 black, 2px -2px 0 black, -2px 2px 0 black, 2px 2px 0 black;
+        pointer-events: none;
+        animation: danmaku-move 20s linear forwards; /* 動畫時間：原來的10s變成20s */
       }
     </style>
   </head>
@@ -121,6 +147,16 @@
             data-zh="註冊你的steam遊戲"
             data-ja="あなたのSteamゲームを登録しよう！"
           >註冊你的steam遊戲</a>
+          <a
+            href="https://forms.gle/o8EyAosyxytMJBhJ7"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="hover:text-emerald-100"
+            data-navtext
+            data-en="Submit message"
+            data-zh="投稿訊息"
+            data-ja="投稿メッセージ"
+          >投稿訊息</a>
           <a
             href="https://discord.gg/EeK94xKU"
             target="_blank"
@@ -168,11 +204,13 @@
       </button>
     </div>
 
-    <!-- Main Content 區域 -->
-    <main class="max-w-7xl mx-auto px-4 py-8">
+    <!-- Main Content 區域（設為 relative 以便絕對定位彈幕容器）-->
+    <main class="max-w-7xl mx-auto px-4 py-8 relative">
       <!-- 動態標題：根據目前 CSV 按鈕的翻譯文字更新 -->
       <h1 id="page-title" class="text-4xl font-medium text-gray-800 mb-2"></h1>
       <div id="game-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+      <!-- 新增：彈幕容器，覆蓋在遊戲卡片區上層 -->
+      <div id="danmaku-container" class="pointer-events-none absolute inset-0"></div>
     </main>
 
     <!-- Modal Overlay (初始隱藏) -->
@@ -199,6 +237,12 @@
       } else if (navLang.startsWith("ja")) {
         currentLanguage = "ja";
       }
+      function clearDanmaku() {
+        const container = document.getElementById("danmaku-container");
+        if (container) {
+          container.innerHTML = "";
+        }
+      }
       let currentCSVButton = null;
       function updateCardTitles() {
         document.querySelectorAll(".game-title").forEach((h2) => {
@@ -209,14 +253,14 @@
         });
         document.querySelectorAll("[data-navtext]").forEach((el) => {
           const newText = el.getAttribute("data-" + currentLanguage);
-		  if (newText) {
-			// 如果這個元素的 id 是 modal-content，就用 innerHTML（解析 <br> 標籤）
-			if (el.id === "modal-content") {
-			  el.innerHTML = newText;
-			} else {
-			  el.textContent = newText;
-			}
-		  }
+          if (newText) {
+            // 如果這個元素的 id 是 modal-content，就用 innerHTML（解析 <br> 標籤）
+            if (el.id === "modal-content") {
+              el.innerHTML = newText;
+            } else {
+              el.textContent = newText;
+            }
+          }
         });
         updatePageTitle();
       }
@@ -332,6 +376,7 @@
           const csvFile = this.getAttribute("data-csv");
           loadCSV(csvFile);
           updatePageTitle();
+          clearDanmaku();
         });
       });
 
@@ -343,6 +388,8 @@
           loadCSV(firstCsvBtn.getAttribute("data-csv"));
           updatePageTitle();
         }
+        // 啟動彈幕功能（CSV 載入完成後啟動）
+        loadDanmakuCSV();
       });
 
       /**********************
@@ -362,6 +409,97 @@
           modalOverlay.classList.remove("active");
           modalOverlay.classList.remove("closing");
         }, 500);
+      });
+
+      /**********************
+       * 新增：彈幕功能
+       **********************/
+      let danmakuList = [];       // 存放彈幕資料 (格式：{ message, weight })
+      let totalDanmakuWeight = 0; // 機率總和
+      let danmakuIntervalId = null; // 存放彈幕定時器的 ID
+
+      // 讀取彈幕 CSV 檔 (檔名預設為 danmaku.csv，第一行為標題)
+      function loadDanmakuCSV() {
+        fetch("danmaku.csv?v=" + Date.now())
+          .then(response => response.text())
+          .then(text => {
+            const lines = text.trim().split("\n");
+            danmakuList = [];
+            totalDanmakuWeight = 0;
+            // 從第二行開始讀取
+            for (let i = 1; i < lines.length; i++) {
+              const parts = lines[i].split(",");
+              if (parts.length < 2) {
+                console.error(`彈幕 CSV 第 ${i+1} 行資料不足，跳過：${lines[i]}`);
+                continue;
+              }
+              const message = parts[0].trim();
+              const weight = parseFloat(parts[1]);
+              if (isNaN(weight) || weight <= 0) continue;
+              danmakuList.push({ message, weight });
+              totalDanmakuWeight += weight;
+            }
+            // 啟動彈幕定時器
+            startDanmakuInterval();
+          })
+          .catch(error => console.error("讀取彈幕 CSV 發生錯誤:", error));
+      }
+
+      // 依加權機率隨機選取一則彈幕文字
+      function chooseDanmaku() {
+        if (danmakuList.length === 0) return null;
+        let r = Math.random() * totalDanmakuWeight;
+        for (const item of danmakuList) {
+          r -= item.weight;
+          if (r <= 0) return item.message;
+        }
+        return danmakuList[danmakuList.length - 1].message;
+      }
+
+      // 產生彈幕 DOM 元素並加入彈幕容器
+      function createDanmaku(message) {
+        const container = document.getElementById("danmaku-container");
+        if (!container) return;
+        const danmakuEl = document.createElement("div");
+        danmakuEl.className = "danmaku-item";
+        danmakuEl.textContent = message;
+        // 設定隨機的垂直位置 (0% ~ 90%)
+        danmakuEl.style.top = Math.random() * 90 + "%";
+        container.appendChild(danmakuEl);
+        // 動畫結束後移除該元素
+        danmakuEl.addEventListener("animationend", () => {
+          danmakuEl.remove();
+        });
+      }
+
+      // 啟動彈幕定時器
+      function startDanmakuInterval() {
+        // 避免重複啟動
+        stopDanmakuInterval();
+        danmakuIntervalId = setInterval(() => {
+          const msg = chooseDanmaku();
+          if (msg) {
+            createDanmaku(msg);
+          }
+        }, 2100);
+      }
+
+      // 停止彈幕定時器
+      function stopDanmakuInterval() {
+        if (danmakuIntervalId !== null) {
+          clearInterval(danmakuIntervalId);
+          danmakuIntervalId = null;
+        }
+      }
+
+      // 利用頁面能見度 API 避免累積彈幕
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) {
+          stopDanmakuInterval();
+        } else {
+          clearDanmaku(); // 清除現有彈幕，避免重疊
+          startDanmakuInterval();
+        }
       });
     </script>
   </body>
