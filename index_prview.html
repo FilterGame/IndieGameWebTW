@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <!-- 使用 mobile-first 設定 -->
+    <!-- mobile-first: 讓 viewport 適應裝置寬度 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>IndieGameWebTW - 台灣steam遊戲列表!</title>
     <!-- Google tag (gtag.js) -->
@@ -19,7 +19,7 @@
       /* 防止彈幕造成水平拉伸 */
       html, body {
         overflow-x: hidden;
-        /* 移除 height: 100%，讓頁面高度隨內容增長 */
+        /* 移除 height:100%，讓頁面高度隨內容增長 */
       }
 
       /* 針對有凹槽的行動裝置（如 iPhone）增加安全區間 */
@@ -81,7 +81,6 @@
         opacity: 0;
         visibility: hidden;
         transition: opacity 0.5s ease, visibility 0.5s ease;
-        /* 讓 modal 內容不足時可捲動 */
         overflow-y: auto;
       }
       #modal-overlay.active {
@@ -122,7 +121,7 @@
       }
     </style>
   </head>
-  <body class="min-h-screen bg-white">
+  <body class="bg-white">
     <!-- Navigation 區域 -->
     <nav class="bg-emerald-500 text-white sticky top-0 z-50">
       <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center">
@@ -151,22 +150,29 @@
       <button class="csv-btn" data-csv="cards3.csv" data-random="true" data-navtext data-en="Overseas Partner Steam List" data-zh="海外友商steam列表" data-ja="海外パートナーSteamリスト">海外友商steam列表</button>
     </div>
 
-    <!-- Main 內容區（容器自適應手機寬度） -->
-    <main class="max-w-7xl mx-auto px-4 py-8 relative">
+    <!-- Main 內容區 -->
+    <main class="max-w-7xl mx-auto px-4 py-8">
       <h1 id="page-title" class="text-4xl font-medium text-gray-800 mb-2"></h1>
-      <div id="game-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
-      <!-- 彈幕容器 -->
-      <div id="danmaku-container" class="pointer-events-none absolute inset-0"></div>
+      <!-- 調整網格設定：手機預設 2 欄，其餘依需求 -->
+      <div id="game-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4"></div>
     </main>
+
+    <!-- 將彈幕容器移至 body 直接子層，使用 fixed 定位 -->
+    <div id="danmaku-container" class="pointer-events-none fixed inset-0 z-10"></div>
 
     <!-- Modal Overlay -->
     <div id="modal-overlay">
-      <div id="modal-content" data-navtext data-en="Hello everyone! This is KO from FilterGame ＼(^ω^＼) <br> Since I’ve received a lot of feedback and messages, I’d like to clarify a few things here.<br><br>1.Only Steam games are eligible for listing.<br>2.Adult games are not currently accepted.<br>3.Some older Steam games cannot be listed yet due to missing images.<br>4.UTM tracking is not supported at the moment.<br>5.The website will continue in its current format for a while,serving as a game listing platform.<br>6.Steam game submissions are welcome!<br>Submitted games will be added to the list more quickly.<br><br>Thank you all for your support!" data-zh="大家好,這裡是FilterGame的KO ＼(^ω^＼) <br> 因為收到很多的意見與來信,這邊做一個統一說明<br><br> 1.收錄必須是steam遊戲<br> 2.目前沒有收成人遊戲<br> 3.有些過早的steam遊戲因為缺乏圖片無法顯示暫時無法收入<br> 4.utm功能暫時不支援<br> 5.網站會維持現在的方式一段時間,以遊戲清單的方式給大家服務<br> 6.歡迎大家提交steam遊戲,提交的遊戲會比較快出現<br><br>感謝大家的支持" data-ja="皆さん、こんにちは！FilterGameのKOです ＼(^ω^＼)<br>たくさんのご意見やお問い合わせをいただいたので、こちらでまとめて説明します。<br><br>1.登録対象はSteamゲームのみ です。<br>2.現在、アダルトゲームは収録していません。<br>3.古いSteamゲーム の中には、画像が不足しているため表示できず、その関係で一時的に登録できないものもあります。<br>4.UTM機能は現在サポートしていません。<br>5.サイトは しばらく現状の形 で運営し、<br>ゲームリストとしてサービスを提供していきます。<br>6.Steamゲームの登録を歓迎しています！提出されたゲームは優先的にリストへ反映されます。<br><br>皆さんのご支援に感謝します！">
+      <div 
+        id="modal-content" 
+        data-navtext 
+        data-en="Hello everyone! This is KO from FilterGame ＼(^ω^＼) <br> Since I’ve received a lot of feedback and messages, I’d like to clarify a few things here.<br><br>1.Only Steam games are eligible for listing.<br>2.Adult games are not currently accepted.<br>3.Some older Steam games cannot be listed yet due to missing images.<br>4.UTM tracking is not supported at the moment.<br>5.The website will continue in its current format for a while,serving as a game listing platform.<br>6.Steam game submissions are welcome!<br>Submitted games will be added to the list more quickly.<br><br>Thank you all for your support!" 
+        data-zh="大家好,這裡是FilterGame的KO ＼(^ω^＼) <br> 因為收到很多的意見與來信,這邊做一個統一說明<br><br> 1.收錄必須是steam遊戲<br> 2.目前沒有收成人遊戲<br> 3.有些過早的steam遊戲因為缺乏圖片無法顯示暫時無法收入<br> 4.utm功能暫時不支援<br> 5.網站會維持現在的方式一段時間,以遊戲清單的方式給大家服務<br> 6.歡迎大家提交steam遊戲,提交的遊戲會比較快出現<br><br>感謝大家的支持" 
+        data-ja="皆さん、こんにちは！FilterGameのKOです ＼(^ω^＼)<br>たくさんのご意見やお問い合わせをいただいたので、こちらでまとめて説明します。<br><br>1.登録対象はSteamゲームのみ です。<br>2.現在、アダルトゲームは収録していません。<br>3.古いSteamゲーム の中には、画像が不足しているため表示できず、その関係で一時的に登録できないものもあります。<br>4.UTM機能は現在サポートしていません。<br>5.サイトは しばらく現状の形 で運営し、<br>ゲームリストとしてサービスを提供していきます。<br>6.Steamゲームの登録を歓迎しています！提出されたゲームは優先的にリストへ反映されます。<br><br>皆さんのご支援に感謝します！">
         大家好,這裡是FilterGame的KO ＼(^ω^＼) <br> 因為收到很多的意見與來信,這邊做一個統一說明<br><br> 1.收錄必須是steam遊戲<br> 2.目前沒有收成人遊戲<br> 3.有些過早的steam遊戲因為缺乏圖片無法顯示暫時無法收入<br> 4.utm功能暫時不支援<br> 5.網站會維持現在的方式一段時間,以遊戲清單的方式給大家服務<br> 6.歡迎大家提交steam遊戲,提交的遊戲會比較快出現<br><br>感謝大家的支持
       </div>
     </div>
 
-    <!-- JavaScript 程式碼 -->
+    <!-- JavaScript 程式碼（保持原有功能） -->
     <script>
       /**********************
        * 語言切換功能
