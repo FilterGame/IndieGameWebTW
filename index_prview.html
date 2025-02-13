@@ -148,6 +148,16 @@
             data-ja="あなたのSteamゲームを登録しよう！"
           >註冊你的steam遊戲</a>
           <a
+            href="https://forms.gle/o8EyAosyxytMJBhJ7"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="hover:text-emerald-100"
+            data-navtext
+            data-en="Submit message"
+            data-zh="投稿訊息"
+            data-ja="投稿メッセージ"
+          >投稿訊息</a>
+          <a
             href="https://discord.gg/EeK94xKU"
             target="_blank"
             rel="noopener noreferrer"
@@ -378,7 +388,7 @@
           loadCSV(firstCsvBtn.getAttribute("data-csv"));
           updatePageTitle();
         }
-        // 啟動彈幕功能
+        // 啟動彈幕功能（CSV 載入完成後啟動）
         loadDanmakuCSV();
       });
 
@@ -406,6 +416,7 @@
        **********************/
       let danmakuList = [];       // 存放彈幕資料 (格式：{ message, weight })
       let totalDanmakuWeight = 0; // 機率總和
+      let danmakuIntervalId = null; // 存放彈幕定時器的 ID
 
       // 讀取彈幕 CSV 檔 (檔名預設為 danmaku.csv，第一行為標題)
       function loadDanmakuCSV() {
@@ -428,7 +439,7 @@
               danmakuList.push({ message, weight });
               totalDanmakuWeight += weight;
             }
-            // 啟動每2秒一次的彈幕產生
+            // 啟動彈幕定時器
             startDanmakuInterval();
           })
           .catch(error => console.error("讀取彈幕 CSV 發生錯誤:", error));
@@ -461,15 +472,35 @@
         });
       }
 
-      // 每2秒依機率產生一則彈幕
+      // 啟動彈幕定時器
       function startDanmakuInterval() {
-        setInterval(() => {
+        // 避免重複啟動
+        stopDanmakuInterval();
+        danmakuIntervalId = setInterval(() => {
           const msg = chooseDanmaku();
           if (msg) {
             createDanmaku(msg);
           }
-        }, 2000);
+        }, 2100);
       }
+
+      // 停止彈幕定時器
+      function stopDanmakuInterval() {
+        if (danmakuIntervalId !== null) {
+          clearInterval(danmakuIntervalId);
+          danmakuIntervalId = null;
+        }
+      }
+
+      // 利用頁面能見度 API 避免累積彈幕
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) {
+          stopDanmakuInterval();
+        } else {
+          clearDanmaku(); // 清除現有彈幕，避免重疊
+          startDanmakuInterval();
+        }
+      });
     </script>
   </body>
 </html>
