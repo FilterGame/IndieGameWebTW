@@ -16,10 +16,11 @@
     <!-- 引入 Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-      /* 防止彈幕造成水平拉伸 */
+      /* 重設 margin 與 padding，避免預設樣式影響 */
       html, body {
+        margin: 0;
+        padding: 0;
         overflow-x: hidden;
-        /* 移除 height:100%，讓頁面高度隨內容增長 */
       }
 
       /* 針對有凹槽的行動裝置（如 iPhone）增加安全區間 */
@@ -81,11 +82,12 @@
         opacity: 0;
         visibility: hidden;
         transition: opacity 0.5s ease, visibility 0.5s ease;
-        overflow-y: auto;
+        overflow: hidden; /* 預設隱藏內部捲軸 */
       }
       #modal-overlay.active {
         opacity: 1;
         visibility: visible;
+        overflow-y: auto; /* active 時允許內部捲動 */
       }
       #modal-content {
         color: white;
@@ -153,11 +155,11 @@
     <!-- Main 內容區 -->
     <main class="max-w-7xl mx-auto px-4 py-8">
       <h1 id="page-title" class="text-4xl font-medium text-gray-800 mb-2"></h1>
-      <!-- 調整網格設定：手機預設 2 欄，其餘依需求 -->
+      <!-- 調整網格設定：手機預設 2 欄，桌機 3 欄 -->
       <div id="game-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4"></div>
     </main>
 
-    <!-- 將彈幕容器移至 body 直接子層，使用 fixed 定位 -->
+    <!-- 將彈幕容器移至 body 的固定定位 -->
     <div id="danmaku-container" class="pointer-events-none fixed inset-0 z-10"></div>
 
     <!-- Modal Overlay -->
@@ -172,7 +174,7 @@
       </div>
     </div>
 
-    <!-- JavaScript 程式碼（保持原有功能） -->
+    <!-- JavaScript 程式碼 -->
     <script>
       /**********************
        * 語言切換功能
