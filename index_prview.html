@@ -2,6 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <!-- 使用 mobile-first 設定 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>IndieGameWebTW - 台灣steam遊戲列表!</title>
     <!-- Google tag (gtag.js) -->
@@ -18,16 +19,16 @@
       /* 防止彈幕造成水平拉伸 */
       html, body {
         overflow-x: hidden;
-		height: 100%;
+        /* 移除 height: 100%，讓頁面高度隨內容增長 */
       }
 
-      /* 新增：針對有凹槽的行動裝置（如 iPhone）增加安全區間 (safe area) 的頂部間距 */
+      /* 針對有凹槽的行動裝置（如 iPhone）增加安全區間 */
       nav {
         padding-top: calc(env(safe-area-inset-top, 0px) + 0.5rem);
         padding-bottom: 0.5rem;
       }
       
-      /* 卡片進場動畫：預設隱藏且下移 50px，進入視窗時淡入上移 */
+      /* 卡片進場動畫 */
       .game-card {
         opacity: 0;
         transform: translateY(50px);
@@ -37,14 +38,14 @@
         opacity: 1;
         transform: translateY(0);
       }
-      /* 圖片放大動畫：滑鼠移入時，圖片 0.5 秒內放大到 1.1 倍 */
+      /* 圖片放大動畫 */
       .game-card img {
         transition: transform 0.5s ease;
       }
       .game-card:hover img {
         transform: scale(1.1);
       }
-      /* 語言切換按鈕樣式 */
+      /* 語言切換按鈕 */
       .lang-btn {
         background: transparent;
         border: none;
@@ -56,7 +57,7 @@
       .lang-btn:hover {
         text-decoration: underline;
       }
-      /* CSV 選擇按鈕樣式 */
+      /* CSV 按鈕 */
       .csv-btn {
         background: #3b82f6;
         color: white;
@@ -80,6 +81,8 @@
         opacity: 0;
         visibility: hidden;
         transition: opacity 0.5s ease, visibility 0.5s ease;
+        /* 讓 modal 內容不足時可捲動 */
+        overflow-y: auto;
       }
       #modal-overlay.active {
         opacity: 1;
@@ -92,14 +95,13 @@
         text-align: center;
         padding: 1rem;
         transition: opacity 0.5s ease;
-        white-space: pre-wrap;  /* 允許換行符號 */
+        white-space: pre-wrap;
       }
-      /* Modal內容淡出 */
       #modal-overlay.closing #modal-content {
         opacity: 0;
       }
       
-      /* ===== 新增：彈幕樣式 ===== */
+      /* ===== 彈幕樣式 ===== */
       @keyframes danmaku-move {
         from {
           transform: translateX(100vw);
@@ -113,74 +115,26 @@
         white-space: nowrap;
         font-weight: bold;
         color: white;
-        font-size: 2rem; /* 文字大小：原來的2倍 */
-        /* 調整描邊偏移：從 1px 調整為 2px */
+        font-size: 2rem;
         text-shadow: -2px -2px 0 black, 2px -2px 0 black, -2px 2px 0 black, 2px 2px 0 black;
         pointer-events: none;
-        animation: danmaku-move 20s linear forwards; /* 動畫時間：原來的10s變成20s */
+        animation: danmaku-move 20s linear forwards;
       }
     </style>
   </head>
   <body class="min-h-screen bg-white">
-    <!-- 固定在最上方的 Navigation 區域 -->
+    <!-- Navigation 區域 -->
     <nav class="bg-emerald-500 text-white sticky top-0 z-50">
-      <!-- 使用 flex-col 在手機上排列，md 以上則水平排列 -->
       <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center">
         <!-- 左側導覽連結 -->
-        <div class="flex space-x-8">
-          <a
-            href="https://www.facebook.com/FilterGame"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="hover:text-emerald-100"
-            data-navtext
-            data-en="FilterGame"
-            data-zh="FilterGame"
-            data-ja="FilterGame"
-          >FilterGame</a>
-          <a
-            href="https://forms.gle/GLXSFuxTDkaQ6MLEA"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="hover:text-emerald-100"
-            data-navtext
-            data-en="Register your Steam game!"
-            data-zh="註冊你的steam遊戲"
-            data-ja="あなたのSteamゲームを登録しよう！"
-          >註冊你的steam遊戲</a>
-          <a
-            href="https://forms.gle/o8EyAosyxytMJBhJ7"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="hover:text-emerald-100"
-            data-navtext
-            data-en="Submit message"
-            data-zh="投稿訊息"
-            data-ja="投稿メッセージ"
-          >投稿訊息</a>
-          <a
-            href="https://discord.gg/EeK94xKU"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="hover:text-emerald-100"
-            data-navtext
-            data-en="Discord"
-            data-zh="Discord"
-            data-ja="Discord"
-          >Discord</a>
-          <!-- 新增更新履歷&說明按鈕，並加入翻譯屬性 -->
-          <a
-            href="#"
-            id="update-modal-btn"
-            class="hover:text-emerald-100"
-            data-navtext
-            data-en="Update Resume & Info"
-            data-zh="更新履歷&說明"
-            data-ja="更新履歴＆説明"
-          >更新履歷&說明</a>
+        <div class="flex flex-col md:flex-row md:space-x-8 space-y-2 md:space-y-0">
+          <a href="https://www.facebook.com/FilterGame" target="_blank" rel="noopener noreferrer" class="hover:text-emerald-100" data-navtext data-en="FilterGame" data-zh="FilterGame" data-ja="FilterGame">FilterGame</a>
+          <a href="https://forms.gle/GLXSFuxTDkaQ6MLEA" target="_blank" rel="noopener noreferrer" class="hover:text-emerald-100" data-navtext data-en="Register your Steam game!" data-zh="註冊你的steam遊戲" data-ja="あなたのSteamゲームを登録しよう！">註冊你的steam遊戲</a>
+          <a href="https://forms.gle/o8EyAosyxytMJBhJ7" target="_blank" rel="noopener noreferrer" class="hover:text-emerald-100" data-navtext data-en="Submit message" data-zh="投稿訊息" data-ja="投稿メッセージ">投稿訊息</a>
+          <a href="https://discord.gg/EeK94xKU" target="_blank" rel="noopener noreferrer" class="hover:text-emerald-100" data-navtext data-en="Discord" data-zh="Discord" data-ja="Discord">Discord</a>
+          <a href="#" id="update-modal-btn" class="hover:text-emerald-100" data-navtext data-en="Update Resume & Info" data-zh="更新履歷&說明" data-ja="更新履歴＆説明">更新履歷&說明</a>
         </div>
-
-        <!-- 右側語言切換按鈕（在手機上增加上邊距） -->
+        <!-- 右側語言切換 -->
         <div id="language-switcher" class="flex space-x-4 mt-2 md:mt-0">
           <button class="lang-btn" data-lang="zh">中文</button>
           <button class="lang-btn" data-lang="en">English</button>
@@ -189,39 +143,25 @@
       </div>
     </nav>
 
-    <!-- 固定在頂部下方的 CSV 按鈕區 -->
+    <!-- CSV 按鈕區 -->
     <div id="csv-buttons" class="max-w-7xl mx-auto px-4 py-2 flex flex-col md:flex-row gap-4 md:space-x-4 md:sticky md:top-14 z-50">
-      <button class="csv-btn" data-csv="cards.csv" data-navtext data-en="2025 Taipei Game Show - Taiwan Games" data-zh="2025台北電玩展-台灣遊戲列表" data-ja="2025台ペイゲームショー - 台湾ゲーム一覧">
-        2025台北電玩展-台灣遊戲列表
-      </button>
-      <button class="csv-btn" data-csv="cards2.csv" data-random="true" data-navtext data-en="Taiwan Domestic Steam Games - In Development" data-zh="台灣國產steam遊戲-研發中列表" data-ja="台湾国内Steamゲーム - 開発中リスト">
-        台灣國產steam遊戲-研發中列表
-      </button>
-      <button class="csv-btn" data-csv="cards4.csv" data-random="true" data-navtext data-en="Taiwanese Steam Games - Released List (Feel free to add more!)" data-zh="台灣國產steam遊戲-已發售列表(歡迎補充)" data-ja="台湾産Steamゲーム - 発売済みリスト（追加歓迎！）">
-        台灣國產steam遊戲-已發售列表(歡迎補充)
-      </button>
-      <button class="csv-btn" data-csv="cards3.csv" data-random="true" data-navtext data-en="Overseas Partner Steam List" data-zh="海外友商steam列表" data-ja="海外パートナーSteamリスト">
-        海外友商steam列表
-      </button>
+      <button class="csv-btn" data-csv="cards.csv" data-navtext data-en="2025 Taipei Game Show - Taiwan Games" data-zh="2025台北電玩展-台灣遊戲列表" data-ja="2025台ペイゲームショー - 台湾ゲーム一覧">2025台北電玩展-台灣遊戲列表</button>
+      <button class="csv-btn" data-csv="cards2.csv" data-random="true" data-navtext data-en="Taiwan Domestic Steam Games - In Development" data-zh="台灣國產steam遊戲-研發中列表" data-ja="台湾国内Steamゲーム - 開発中リスト">台灣國產steam遊戲-研發中列表</button>
+      <button class="csv-btn" data-csv="cards4.csv" data-random="true" data-navtext data-en="Taiwanese Steam Games - Released List (Feel free to add more!)" data-zh="台灣國產steam遊戲-已發售列表(歡迎補充)" data-ja="台湾産Steamゲーム - 発売済みリスト（追加歓迎！）">台灣國產steam遊戲-已發售列表(歡迎補充)</button>
+      <button class="csv-btn" data-csv="cards3.csv" data-random="true" data-navtext data-en="Overseas Partner Steam List" data-zh="海外友商steam列表" data-ja="海外パートナーSteamリスト">海外友商steam列表</button>
     </div>
 
-    <!-- Main Content 區域（設為 relative 以便絕對定位彈幕容器）-->
+    <!-- Main 內容區（容器自適應手機寬度） -->
     <main class="max-w-7xl mx-auto px-4 py-8 relative">
-      <!-- 動態標題：根據目前 CSV 按鈕的翻譯文字更新 -->
       <h1 id="page-title" class="text-4xl font-medium text-gray-800 mb-2"></h1>
       <div id="game-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
-      <!-- 新增：彈幕容器，覆蓋在遊戲卡片區上層 -->
+      <!-- 彈幕容器 -->
       <div id="danmaku-container" class="pointer-events-none absolute inset-0"></div>
     </main>
 
-    <!-- Modal Overlay (初始隱藏) -->
+    <!-- Modal Overlay -->
     <div id="modal-overlay">
-      <div 
-        id="modal-content" 
-        data-navtext 
-        data-en="Hello everyone! This is KO from FilterGame ＼(^ω^＼) <br> Since I’ve received a lot of feedback and messages, I’d like to clarify a few things here.<br><br>1.Only Steam games are eligible for listing.<br>2.Adult games are not currently accepted.<br>3.Some older Steam games cannot be listed yet due to missing images.<br>4.UTM tracking is not supported at the moment.<br>5.The website will continue in its current format for a while,serving as a game listing platform.<br>6.Steam game submissions are welcome!<br>Submitted games will be added to the list more quickly.<br><br>Thank you all for your support!" 
-        data-zh="大家好,這裡是FilterGame的KO ＼(^ω^＼) <br> 因為收到很多的意見與來信,這邊做一個統一說明<br><br> 1.收錄必須是steam遊戲<br> 2.目前沒有收成人遊戲<br> 3.有些過早的steam遊戲因為缺乏圖片無法顯示暫時無法收入<br> 4.utm功能暫時不支援<br> 5.網站會維持現在的方式一段時間,以遊戲清單的方式給大家服務<br> 6.歡迎大家提交steam遊戲,提交的遊戲會比較快出現<br><br>感謝大家的支持" 
-        data-ja="皆さん、こんにちは！FilterGameのKOです ＼(^ω^＼)<br>たくさんのご意見やお問い合わせをいただいたので、こちらでまとめて説明します。<br><br>1.登録対象はSteamゲームのみ です。<br>2.現在、アダルトゲームは収録していません。<br>3.古いSteamゲーム の中には、画像が不足しているため表示できず、その関係で一時的に登録できないものもあります。<br>4.UTM機能は現在サポートしていません。<br>5.サイトは しばらく現状の形 で運営し、<br>ゲームリストとしてサービスを提供していきます。<br>6.Steamゲームの登録を歓迎しています！提出されたゲームは優先的にリストへ反映されます。<br><br>皆さんのご支援に感謝します！">
+      <div id="modal-content" data-navtext data-en="Hello everyone! This is KO from FilterGame ＼(^ω^＼) <br> Since I’ve received a lot of feedback and messages, I’d like to clarify a few things here.<br><br>1.Only Steam games are eligible for listing.<br>2.Adult games are not currently accepted.<br>3.Some older Steam games cannot be listed yet due to missing images.<br>4.UTM tracking is not supported at the moment.<br>5.The website will continue in its current format for a while,serving as a game listing platform.<br>6.Steam game submissions are welcome!<br>Submitted games will be added to the list more quickly.<br><br>Thank you all for your support!" data-zh="大家好,這裡是FilterGame的KO ＼(^ω^＼) <br> 因為收到很多的意見與來信,這邊做一個統一說明<br><br> 1.收錄必須是steam遊戲<br> 2.目前沒有收成人遊戲<br> 3.有些過早的steam遊戲因為缺乏圖片無法顯示暫時無法收入<br> 4.utm功能暫時不支援<br> 5.網站會維持現在的方式一段時間,以遊戲清單的方式給大家服務<br> 6.歡迎大家提交steam遊戲,提交的遊戲會比較快出現<br><br>感謝大家的支持" data-ja="皆さん、こんにちは！FilterGameのKOです ＼(^ω^＼)<br>たくさんのご意見やお問い合わせをいただいたので、こちらでまとめて説明します。<br><br>1.登録対象はSteamゲームのみ です。<br>2.現在、アダルトゲームは収録していません。<br>3.古いSteamゲーム の中には、画像が不足しているため表示できず、その関係で一時的に登録できないものもあります。<br>4.UTM機能は現在サポートしていません。<br>5.サイトは しばらく現状の形 で運営し、<br>ゲームリストとしてサービスを提供していきます。<br>6.Steamゲームの登録を歓迎しています！提出されたゲームは優先的にリストへ反映されます。<br><br>皆さんのご支援に感謝します！">
         大家好,這裡是FilterGame的KO ＼(^ω^＼) <br> 因為收到很多的意見與來信,這邊做一個統一說明<br><br> 1.收錄必須是steam遊戲<br> 2.目前沒有收成人遊戲<br> 3.有些過早的steam遊戲因為缺乏圖片無法顯示暫時無法收入<br> 4.utm功能暫時不支援<br> 5.網站會維持現在的方式一段時間,以遊戲清單的方式給大家服務<br> 6.歡迎大家提交steam遊戲,提交的遊戲會比較快出現<br><br>感謝大家的支持
       </div>
     </div>
@@ -255,7 +195,6 @@
         document.querySelectorAll("[data-navtext]").forEach((el) => {
           const newText = el.getAttribute("data-" + currentLanguage);
           if (newText) {
-            // 如果這個元素的 id 是 modal-content，就用 innerHTML（解析 <br> 標籤）
             if (el.id === "modal-content") {
               el.innerHTML = newText;
             } else {
@@ -389,7 +328,7 @@
           loadCSV(firstCsvBtn.getAttribute("data-csv"));
           updatePageTitle();
         }
-        // 啟動彈幕功能（CSV 載入完成後啟動）
+        // 啟動彈幕功能
         loadDanmakuCSV();
       });
 
@@ -400,10 +339,8 @@
       const updateModalBtn = document.getElementById("update-modal-btn");
       updateModalBtn.addEventListener("click", function(e) {
         e.preventDefault();
-        // 顯示 modal overlay (加入 active class觸發淡入)
         modalOverlay.classList.add("active");
       });
-      // 點擊 overlay 任意位置關閉 modal (先觸發內容淡出，等待 0.5秒後關閉)
       modalOverlay.addEventListener("click", function() {
         modalOverlay.classList.add("closing");
         setTimeout(() => {
@@ -413,13 +350,12 @@
       });
 
       /**********************
-       * 新增：彈幕功能
+       * 彈幕功能
        **********************/
-      let danmakuList = [];       // 存放彈幕資料 (格式：{ message, weight })
-      let totalDanmakuWeight = 0; // 機率總和
-      let danmakuIntervalId = null; // 存放彈幕定時器的 ID
+      let danmakuList = [];       
+      let totalDanmakuWeight = 0; 
+      let danmakuIntervalId = null; 
 
-      // 讀取彈幕 CSV 檔 (檔名預設為 danmaku.csv，第一行為標題)
       function loadDanmakuCSV() {
         fetch("danmaku.csv?v=" + Date.now())
           .then(response => response.text())
@@ -427,7 +363,6 @@
             const lines = text.trim().split("\n");
             danmakuList = [];
             totalDanmakuWeight = 0;
-            // 從第二行開始讀取
             for (let i = 1; i < lines.length; i++) {
               const parts = lines[i].split(",");
               if (parts.length < 2) {
@@ -440,13 +375,11 @@
               danmakuList.push({ message, weight });
               totalDanmakuWeight += weight;
             }
-            // 啟動彈幕定時器
             startDanmakuInterval();
           })
           .catch(error => console.error("讀取彈幕 CSV 發生錯誤:", error));
       }
 
-      // 依加權機率隨機選取一則彈幕文字
       function chooseDanmaku() {
         if (danmakuList.length === 0) return null;
         let r = Math.random() * totalDanmakuWeight;
@@ -457,25 +390,20 @@
         return danmakuList[danmakuList.length - 1].message;
       }
 
-      // 產生彈幕 DOM 元素並加入彈幕容器
       function createDanmaku(message) {
         const container = document.getElementById("danmaku-container");
         if (!container) return;
         const danmakuEl = document.createElement("div");
         danmakuEl.className = "danmaku-item";
         danmakuEl.textContent = message;
-        // 設定隨機的垂直位置 (0% ~ 90%)
         danmakuEl.style.top = Math.random() * 90 + "%";
         container.appendChild(danmakuEl);
-        // 動畫結束後移除該元素
         danmakuEl.addEventListener("animationend", () => {
           danmakuEl.remove();
         });
       }
 
-      // 啟動彈幕定時器
       function startDanmakuInterval() {
-        // 避免重複啟動
         stopDanmakuInterval();
         danmakuIntervalId = setInterval(() => {
           const msg = chooseDanmaku();
@@ -485,7 +413,6 @@
         }, 2100);
       }
 
-      // 停止彈幕定時器
       function stopDanmakuInterval() {
         if (danmakuIntervalId !== null) {
           clearInterval(danmakuIntervalId);
@@ -493,12 +420,11 @@
         }
       }
 
-      // 利用頁面能見度 API 避免累積彈幕
       document.addEventListener("visibilitychange", () => {
         if (document.hidden) {
           stopDanmakuInterval();
         } else {
-          clearDanmaku(); // 清除現有彈幕，避免重疊
+          clearDanmaku();
           startDanmakuInterval();
         }
       });
