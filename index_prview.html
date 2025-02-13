@@ -15,6 +15,11 @@
     <!-- 引入 Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+      /* 防止彈幕造成水平拉伸 */
+      html, body {
+        overflow-x: hidden;
+      }
+
       /* 新增：針對有凹槽的行動裝置（如 iPhone）增加安全區間 (safe area) 的頂部間距 */
       nav {
         padding-top: calc(env(safe-area-inset-top, 0px) + 0.5rem);
@@ -86,7 +91,7 @@
         text-align: center;
         padding: 1rem;
         transition: opacity 0.5s ease;
-    	  white-space: pre-wrap;  /* 允許換行符號 */
+        white-space: pre-wrap;  /* 允許換行符號 */
       }
       /* Modal內容淡出 */
       #modal-overlay.closing #modal-content {
@@ -94,25 +99,25 @@
       }
       
       /* ===== 新增：彈幕樣式 ===== */
-	@keyframes danmaku-move {
-	  from {
-		transform: translateX(100vw);
-	  }
-	  to {
-		transform: translateX(-100vw);
-	  }
-	}
-	.danmaku-item {
-	  position: absolute;
-	  white-space: nowrap;
-	  font-weight: bold;
-	  color: white;
-	  font-size: 2rem; /* 文字大小：原來的2倍 */
-	  /* 調整描邊偏移：從 1px 調整為 2px */
-	  text-shadow: -2px -2px 0 black, 2px -2px 0 black, -2px 2px 0 black, 2px 2px 0 black;
-	  pointer-events: none;
-	  animation: danmaku-move 20s linear forwards; /* 動畫時間：原來的10s變成20s */
-	}
+      @keyframes danmaku-move {
+        from {
+          transform: translateX(100vw);
+        }
+        to {
+          transform: translateX(-100vw);
+        }
+      }
+      .danmaku-item {
+        position: absolute;
+        white-space: nowrap;
+        font-weight: bold;
+        color: white;
+        font-size: 2rem; /* 文字大小：原來的2倍 */
+        /* 調整描邊偏移：從 1px 調整為 2px */
+        text-shadow: -2px -2px 0 black, 2px -2px 0 black, -2px 2px 0 black, 2px 2px 0 black;
+        pointer-events: none;
+        animation: danmaku-move 20s linear forwards; /* 動畫時間：原來的10s變成20s */
+      }
     </style>
   </head>
   <body class="min-h-screen bg-white">
@@ -222,12 +227,12 @@
       } else if (navLang.startsWith("ja")) {
         currentLanguage = "ja";
       }
-	  function clearDanmaku() {
-		  const container = document.getElementById("danmaku-container");
-		  if (container) {
-			container.innerHTML = "";
-		  }
-		}
+      function clearDanmaku() {
+        const container = document.getElementById("danmaku-container");
+        if (container) {
+          container.innerHTML = "";
+        }
+      }
       let currentCSVButton = null;
       function updateCardTitles() {
         document.querySelectorAll(".game-title").forEach((h2) => {
@@ -361,7 +366,7 @@
           const csvFile = this.getAttribute("data-csv");
           loadCSV(csvFile);
           updatePageTitle();
-	      clearDanmaku();
+          clearDanmaku();
         });
       });
 
