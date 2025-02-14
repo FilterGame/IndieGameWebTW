@@ -154,6 +154,8 @@
           <a href="https://discord.gg/EeK94xKU" target="_blank" rel="noopener noreferrer" class="hover:text-emerald-100" data-navtext data-en="Discord" data-zh="Discord" data-ja="Discord">Discord</a>
           <a href="#" id="update-modal-btn" class="hover:text-emerald-100" data-navtext data-en="Update Resume & Info" data-zh="更新履歷&說明" data-ja="更新履歴＆説明">更新履歷&說明</a>
         </div>
+        <!-- 彈幕開關按鈕 -->
+        <button id="danmaku-toggle" class="bg-emerald-500 text-white px-3 py-1 rounded">彈幕 ON</button>
         <!-- 右側語言切換 -->
         <div id="language-switcher" class="flex space-x-4 mt-2 md:mt-0">
           <button class="lang-btn" data-lang="zh">中文</button>
@@ -382,6 +384,7 @@
       let danmakuList = [];       
       let totalDanmakuWeight = 0; 
       let danmakuIntervalId = null; 
+      let danmakuEnabled = true; // 新增變數來追蹤彈幕狀態
 
       function loadDanmakuCSV() {
         fetch("danmaku.csv?v=" + Date.now())
@@ -432,12 +435,14 @@
 
       function startDanmakuInterval() {
         stopDanmakuInterval();
-        danmakuIntervalId = setInterval(() => {
-          const msg = chooseDanmaku();
-          if (msg) {
-            createDanmaku(msg);
-          }
-        }, 4800);
+        if (danmakuEnabled) {
+          danmakuIntervalId = setInterval(() => {
+            const msg = chooseDanmaku();
+            if (msg) {
+              createDanmaku(msg);
+            }
+          }, 4800);
+        }
       }
 
       function stopDanmakuInterval() {
@@ -453,6 +458,22 @@
         } else {
           clearDanmaku();
           startDanmakuInterval();
+        }
+      });
+
+      /**********************
+       * 彈幕開關按鈕事件處理
+       **********************/
+      const danmakuToggleBtn = document.getElementById("danmaku-toggle");
+      danmakuToggleBtn.addEventListener("click", () => {
+        danmakuEnabled = !danmakuEnabled;
+        if (danmakuEnabled) {
+          danmakuToggleBtn.textContent = "彈幕 ON";
+          startDanmakuInterval();
+        } else {
+          danmakuToggleBtn.textContent = "彈幕 OFF";
+          stopDanmakuInterval();
+          clearDanmaku();
         }
       });
     </script>
