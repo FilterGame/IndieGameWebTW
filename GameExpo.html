@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title data-i18n="hero_title">GAME SALE EXPO 2025 - The Biggest Game Sale Event</title>
+  <meta name="description" content="Discover amazing deals on your favorite games at the Game Sale Expo 2025. Limited time offers and exclusive bundles available." />
+  <meta name="generator" content="v0.dev" />
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet" />
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- PapaParse 用於解析 CSV -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+  <style>
+    /* 自定義 CSS 變數 (globals.css) */
+    :root {
+      --background: 0 0% 100%;
+      --foreground: 0 0% 3.9%;
+      --card: 0 0% 100%;
+      --card-foreground: 0 0% 3.9%;
+      --popover: 0 0% 100%;
+      --popover-foreground: 0 0% 3.9%;
+      --primary: 24 100% 50%;
+      --primary-foreground: 0 0% 98%;
+      --secondary: 0 0% 96.1%;
+      --secondary-foreground: 0 0% 9%;
+      --muted: 0 0% 96.1%;
+      --muted-foreground: 0 0% 45.1%;
+      --accent: 0 0% 96.1%;
+      --accent-foreground: 0 0% 9%;
+      --destructive: 0 84.2% 60.2%;
+      --destructive-foreground: 0 0% 98%;
+      --border: 0 0% 89.8%;
+      --input: 0 0% 89.8%;
+      --ring: 24 100% 50%;
+      --radius: 0.5rem;
+    }
+    .dark {
+      --background: 0 0% 3.9%;
+      --foreground: 0 0% 98%;
+      --card: 0 0% 3.9%;
+      --card-foreground: 0 0% 98%;
+      --popover: 0 0% 3.9%;
+      --popover-foreground: 0 0% 98%;
+      --primary: 24 100% 50%;
+      --primary-foreground: 0 0% 98%;
+      --secondary: 0 0% 14.9%;
+      --secondary-foreground: 0 0% 98%;
+      --muted: 0 0% 14.9%;
+      --muted-foreground: 0 0% 63.9%;
+      --accent: 0 0% 14.9%;
+      --accent-foreground: 0 0% 98%;
+      --destructive: 0 62.8% 30.6%;
+      --destructive-foreground: 0 0% 98%;
+      --border: 0 0% 14.9%;
+      --input: 0 0% 14.9%;
+      --ring: 24 100% 50%;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: hsl(var(--background));
+      color: hsl(var(--foreground));
+    }
+    .container {
+      max-width: 80rem;
+      margin-left: auto;
+      margin-right: auto;
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="flex min-h-screen flex-col">
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-black border-b border-orange-500">
+      <div class="container flex h-16 items-center justify-between">
+        <div class="flex items-center gap-2">
+          <img src="/placeholder.svg?height=40&width=40" alt="GameSale Expo Logo" width="40" height="40" class="object-contain" />
+          <span data-i18n="logo_text" class="text-orange-500 font-bold text-xl">GAME SALE EXPO</span>
+        </div>
+        <nav class="hidden md:flex items-center gap-6">
+          <a href="#" data-i18n="home" class="text-white hover:text-orange-400 transition-colors">HOME</a>
+          <a href="#" data-i18n="news" class="text-white hover:text-orange-400 transition-colors">NEWS</a>
+          <a href="#" data-i18n="deals" class="text-white hover:text-orange-400 transition-colors">DEALS</a>
+          <a href="#" data-i18n="games" class="text-white hover:text-orange-400 transition-colors">GAMES</a>
+          <a href="#" data-i18n="contact" class="text-white hover:text-orange-400 transition-colors">CONTACT</a>
+        </nav>
+        <div class="flex items-center gap-4">
+          <a href="#" data-i18n="login" class="text-white hover:text-orange-400 transition-colors text-sm">LOGIN</a>
+          <a href="#" data-i18n="register" class="text-white hover:text-orange-400 transition-colors text-sm">REGISTER</a>
+          <!-- 語言切換下拉選單 -->
+          <select id="language-select" class="bg-black text-white text-sm border border-orange-500 rounded px-1">
+            <option value="en" data-i18n="language_en">EN</option>
+            <option value="zh" data-i18n="language_zh">中文</option>
+            <option value="ja" data-i18n="language_ja">日本語</option>
+          </select>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1">
+      <!-- Hero Banner -->
+      <section class="relative bg-gradient-to-r from-orange-900 to-black">
+        <div class="container py-8 md:py-16 relative z-10">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            <div>
+              <h1 data-i18n="hero_title" class="text-4xl md:text-6xl font-bold text-white mb-4">
+                GAME SALE EXPO 2025
+              </h1>
+              <p data-i18n="hero_date" class="text-xl text-white mb-6">2025.6.15 - 2025.6.30</p>
+              <p data-i18n="hero_description" class="text-white mb-8">
+                The biggest online game sale event of the year with exclusive deals and special offers!
+              </p>
+              <button data-i18n="browse_deals" class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-6 text-lg">
+                BROWSE DEALS
+              </button>
+            </div>
+            <div class="relative h-64 md:h-80">
+              <img src="/placeholder.svg?height=400&width=600" alt="Game Sale Expo Banner" class="object-contain absolute inset-0 w-full h-full" />
+            </div>
+          </div>
+        </div>
+        <div class="absolute inset-0 opacity-20 bg-[url('/placeholder.svg?height=200&width=200')] bg-repeat"></div>
+      </section>
+
+      <!-- Featured Deals 輪播區 -->
+      <section class="py-12 bg-white">
+        <div class="container">
+          <div class="flex items-center justify-between mb-8">
+            <h2 data-i18n="featured_deals" class="text-2xl font-bold">FEATURED DEALS</h2>
+            <div class="flex items-center">
+              <button id="prev-deals" class="mr-2 text-orange-500 hover:text-orange-600">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+              <button id="next-deals" class="text-orange-500 hover:text-orange-600">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div id="featured-deals-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- 遊戲卡片由 JS 動態注入 -->
+          </div>
+        </div>
+      </section>
+
+      <!-- News 區塊 -->
+      <section class="py-12 bg-gray-50">
+        <div class="container">
+          <div class="flex items-center justify-between mb-8">
+            <h2 data-i18n="news_section" class="text-2xl font-bold flex items-center gap-2">
+              <span class="inline-block w-1 h-6 bg-orange-500"></span>
+              NEWS
+            </h2>
+            <a href="#" class="flex items-center text-orange-500 hover:text-orange-600">
+              <span data-i18n="more">MORE</span>
+              <svg class="h-4 w-4 ml-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </a>
+          </div>
+          <!-- 每個新聞項目 -->
+          <div class="space-y-4">
+            <div class="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow p-4">
+              <div class="flex items-center gap-4">
+                <div class="text-sm text-gray-500 whitespace-nowrap">2025.05.11</div>
+                <div class="flex-1">
+                  <h3 data-i18n="news_item" class="font-medium hover:text-orange-500 transition-colors">
+                    Game Sale Expo 2025 announces special publisher deals and exclusive game bundles
+                  </h3>
+                </div>
+                <button class="news-toggle-btn text-orange-500 bg-transparent">
+                  <!-- 預設為展開 -->
+                  <span data-i18n="expand">Expand</span>
+                </button>
+              </div>
+              <!-- 新聞完整內容，隱藏中 -->
+              <div class="news-full-content hidden text-gray-700 mt-4" data-i18n="news_full_item_1">
+                Full content of news item 1 in English. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+              </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow p-4">
+              <div class="flex items-center gap-4">
+                <div class="text-sm text-gray-500 whitespace-nowrap">2025.05.12</div>
+                <div class="flex-1">
+                  <h3 data-i18n="news_item" class="font-medium hover:text-orange-500 transition-colors">
+                    Game Sale Expo 2025 announces special publisher deals and exclusive game bundles
+                  </h3>
+                </div>
+                <button class="news-toggle-btn text-orange-500 bg-transparent">
+                  <span data-i18n="expand">Expand</span>
+                </button>
+              </div>
+              <div class="news-full-content hidden text-gray-700 mt-4" data-i18n="news_full_item_2">
+                Full content of news item 2 in English. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+              </div>
+            </div>
+            <div class="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow p-4">
+              <div class="flex items-center gap-4">
+                <div class="text-sm text-gray-500 whitespace-nowrap">2025.05.13</div>
+                <div class="flex-1">
+                  <h3 data-i18n="news_item" class="font-medium hover:text-orange-500 transition-colors">
+                    Game Sale Expo 2025 announces special publisher deals and exclusive game bundles
+                  </h3>
+                </div>
+                <button class="news-toggle-btn text-orange-500 bg-transparent">
+                  <span data-i18n="expand">Expand</span>
+                </button>
+              </div>
+              <div class="news-full-content hidden text-gray-700 mt-4" data-i18n="news_full_item_3">
+                Full content of news item 3 in English. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Publishers Section -->
+      <section class="py-12 bg-white">
+        <div class="container">
+          <h2 data-i18n="participating_publishers" class="text-2xl font-bold text-center mb-8 flex flex-col items-center">
+            <span class="inline-block w-12 h-1 bg-orange-500 mb-2"></span>
+            PARTICIPATING PUBLISHERS
+          </h2>
+          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+            <div class="flex items-center justify-center p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
+              <img src="/placeholder.svg?height=80&width=120&text=Publisher1" alt="Publisher 1" width="120" height="80" class="object-contain" />
+            </div>
+            <div class="flex items-center justify-center p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
+              <img src="/placeholder.svg?height=80&width=120&text=Publisher2" alt="Publisher 2" width="120" height="80" class="object-contain" />
+            </div>
+            <div class="flex items-center justify-center p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
+              <img src="/placeholder.svg?height=80&width=120&text=Publisher3" alt="Publisher 3" width="120" height="80" class="object-contain" />
+            </div>
+            <div class="flex items-center justify-center p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
+              <img src="/placeholder.svg?height=80&width=120&text=Publisher4" alt="Publisher 4" width="120" height="80" class="object-contain" />
+            </div>
+            <div class="flex items-center justify-center p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
+              <img src="/placeholder.svg?height=80&width=120&text=Publisher5" alt="Publisher 5" width="120" height="80" class="object-contain" />
+            </div>
+            <div class="flex items-center justify-center p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
+              <img src="/placeholder.svg?height=80&width=120&text=Publisher6" alt="Publisher 6" width="120" height="80" class="object-contain" />
+            </div>
+            <div class="flex items-center justify-center p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
+              <img src="/placeholder.svg?height=80&width=120&text=Publisher7" alt="Publisher 7" width="120" height="80" class="object-contain" />
+            </div>
+            <div class="flex items-center justify-center p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
+              <img src="/placeholder.svg?height=80&width=120&text=Publisher8" alt="Publisher 8" width="120" height="80" class="object-contain" />
+            </div>
+            <div class="flex items-center justify-center p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
+              <img src="/placeholder.svg?height=80&width=120&text=Publisher9" alt="Publisher 9" width="120" height="80" class="object-contain" />
+            </div>
+            <div class="flex items-center justify-center p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
+              <img src="/placeholder.svg?height=80&width=120&text=Publisher10" alt="Publisher 10" width="120" height="80" class="object-contain" />
+            </div>
+            <div class="flex items-center justify-center p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
+              <img src="/placeholder.svg?height=80&width=120&text=Publisher11" alt="Publisher 11" width="120" height="80" class="object-contain" />
+            </div>
+            <div class="flex items-center justify-center p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
+              <img src="/placeholder.svg?height=80&width=120&text=Publisher12" alt="Publisher 12" width="120" height="80" class="object-contain" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Contact Section -->
+      <section class="py-12 bg-gray-50">
+        <div class="container">
+          <div class="max-w-2xl mx-auto text-center">
+            <h2 data-i18n="contact_us" class="text-2xl font-bold mb-4 flex flex-col items-center">
+              <span class="inline-block w-12 h-1 bg-orange-500 mb-2"></span>
+              CONTACT US
+            </h2>
+            <p data-i18n="contact_description" class="text-gray-600 mb-8">
+              Have questions about the Game Sale Expo? Contact our team for more information.
+            </p>
+            <button data-i18n="contact_button" class="bg-orange-500 hover:bg-orange-600 text-white px-8">
+              CONTACT US
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Newsletter -->
+      <section class="py-12 bg-black text-white">
+        <div class="container">
+          <div class="max-w-2xl mx-auto text-center">
+            <h2 data-i18n="newsletter_title" class="text-2xl font-bold mb-4">GAME SALE EXPO NEWSLETTER</h2>
+            <p data-i18n="newsletter_description" class="text-gray-300 mb-8">
+              Subscribe to our newsletter to receive the latest updates about deals and upcoming events.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+              <input type="email" placeholder="Your email address" class="px-4 py-2 rounded-md bg-gray-800 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-500" />
+              <button data-i18n="subscribe" class="bg-orange-500 hover:bg-orange-600 text-white px-8">
+                SUBSCRIBE
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-black text-white border-t border-orange-500">
+      <div class="container py-8">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+          <div class="flex items-center gap-2">
+            <img src="/placeholder.svg?height=40&width=40" alt="GameSale Expo Logo" width="40" height="40" class="object-contain" />
+            <span data-i18n="logo_text" class="text-orange-500 font-bold">GAME SALE EXPO</span>
+          </div>
+          <div class="flex items-center gap-4">
+            <a href="#" data-i18n="privacy" class="text-gray-400 hover:text-white transition-colors">Privacy</a>
+            <a href="#" data-i18n="terms" class="text-gray-400 hover:text-white transition-colors">Terms</a>
+            <a href="#" data-i18n="about" class="text-gray-400 hover:text-white transition-colors">About</a>
+            <a href="#" data-i18n="footer_contact" class="text-gray-400 hover:text-white transition-colors">Contact</a>
+          </div>
+          <div class="flex items-center gap-4">
+            <a href="#" class="text-gray-400 hover:text-white transition-colors">
+              <div class="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center">X</div>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-white transition-colors">
+              <div class="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center">f</div>
+            </a>
+            <a href="#" class="text-gray-400 hover:text-white transition-colors">
+              <div class="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center">in</div>
+            </a>
+          </div>
+        </div>
+        <div data-i18n="copyright" class="text-center text-gray-500 text-sm mt-8">© 2025 Game Sale Expo. All rights reserved.</div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- JavaScript：多國語系、Featured Deals 輪播及 News 展開邏輯 -->
+  <script>
+    // 多國語系字串定義
+    const translations = {
+      en: {
+        logo_text: "GAME SALE EXPO",
+        home: "HOME",
+        news: "NEWS",
+        deals: "DEALS",
+        games: "GAMES",
+        contact: "CONTACT",
+        login: "LOGIN",
+        register: "REGISTER",
+        browse_deals: "BROWSE DEALS",
+        hero_title: "GAME SALE EXPO 2025",
+        hero_date: "2025.6.15 - 2025.6.30",
+        hero_description: "The biggest online game sale event of the year with exclusive deals and special offers!",
+        featured_deals: "FEATURED DEALS",
+        view_all: "View All",
+        add_to_cart: "Add to Cart",
+        news_section: "NEWS",
+        more: "MORE",
+        news_item: "Game Sale Expo 2025 announces special publisher deals and exclusive game bundles",
+        news_full_item_1: "Full content of news item 1 in English. Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+        news_full_item_2: "Full content of news item 2 in English. Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+        news_full_item_3: "Full content of news item 3 in English. Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+        participating_publishers: "PARTICIPATING PUBLISHERS",
+        contact_us: "CONTACT US",
+        contact_description: "Have questions about the Game Sale Expo? Contact our team for more information.",
+        contact_button: "CONTACT US",
+        newsletter_title: "GAME SALE EXPO NEWSLETTER",
+        newsletter_description: "Subscribe to our newsletter to receive the latest updates about deals and upcoming events.",
+        subscribe: "SUBSCRIBE",
+        privacy: "Privacy",
+        terms: "Terms",
+        about: "About",
+        footer_contact: "Contact",
+        language_en: "EN",
+        language_zh: "中文",
+        language_ja: "日本語",
+        expand: "Expand",
+        collapse: "Collapse",
+        copyright: "© 2025 Game Sale Expo. All rights reserved."
+      },
+      zh: {
+        logo_text: "遊戲特賣博覽",
+        home: "首頁",
+        news: "新聞",
+        deals: "特賣",
+        games: "遊戲",
+        contact: "聯絡",
+        login: "登入",
+        register: "註冊",
+        browse_deals: "瀏覽優惠",
+        hero_title: "遊戲特賣博覽 2025",
+        hero_date: "2025.6.15 - 2025.6.30",
+        hero_description: "今年最大的線上遊戲特賣活動，提供獨家優惠和特別折扣！",
+        featured_deals: "特色優惠",
+        view_all: "查看全部",
+        add_to_cart: "加入購物車",
+        news_section: "新聞",
+        more: "更多",
+        news_item: "遊戲特賣博覽 2025 宣布特別廠商優惠及獨家遊戲組合",
+        news_full_item_1: "新聞項目 1 的完整內容。示例文本，請根據需求修改。",
+        news_full_item_2: "新聞項目 2 的完整內容。示例文本，請根據需求修改。",
+        news_full_item_3: "新聞項目 3 的完整內容。示例文本，請根據需求修改。",
+        participating_publishers: "參與廠商",
+        contact_us: "聯絡我們",
+        contact_description: "對於遊戲特賣博覽有疑問？請聯絡我們的團隊獲得更多資訊。",
+        contact_button: "聯絡我們",
+        newsletter_title: "遊戲特賣博覽電子報",
+        newsletter_description: "訂閱我們的電子報，獲得最新優惠和活動資訊。",
+        subscribe: "訂閱",
+        privacy: "隱私",
+        terms: "條款",
+        about: "關於",
+        footer_contact: "聯絡",
+        language_en: "EN",
+        language_zh: "中文",
+        language_ja: "日本語",
+        expand: "展開",
+        collapse: "收起",
+        copyright: "© 2025 遊戲特賣博覽。版權所有。"
+      },
+      ja: {
+        logo_text: "ゲームセールエキスポ",
+        home: "ホーム",
+        news: "ニュース",
+        deals: "ディール",
+        games: "ゲーム",
+        contact: "連絡先",
+        login: "ログイン",
+        register: "登録",
+        browse_deals: "ディールを閲覧",
+        hero_title: "ゲームセールエキスポ 2025",
+        hero_date: "2025.6.15 - 2025.6.30",
+        hero_description: "今年最大のオンラインゲームセールイベント。限定の割引や特別オファーが満載！",
+        featured_deals: "注目のディール",
+        view_all: "すべて表示",
+        add_to_cart: "カートに追加",
+        news_section: "ニュース",
+        more: "もっと見る",
+        news_item: "ゲームセールエキスポ2025が特別なパブリッシャー割引と独占的なゲームバンドルを発表",
+        news_full_item_1: "ニュース項目 1 の完全な内容。サンプルテキスト、必要に応じて修正してください。",
+        news_full_item_2: "ニュース項目 2 の完全な内容。サンプルテキスト、必要に応じて修正してください。",
+        news_full_item_3: "ニュース項目 3 の完全な内容。サンプルテキスト、必要に応じて修正してください。",
+        participating_publishers: "参加出版社",
+        contact_us: "お問い合わせ",
+        contact_description: "ゲームセールエキスポについてご質問がある場合は、詳しくはお問い合わせください。",
+        contact_button: "お問い合わせ",
+        newsletter_title: "ゲームセールエキスポ ニュースレター",
+        newsletter_description: "最新のディールと今後のイベント情報を受け取るためにニュースレターに登録してください。",
+        subscribe: "購読",
+        privacy: "プライバシー",
+        terms: "利用規約",
+        about: "概要",
+        footer_contact: "連絡先",
+        language_en: "EN",
+        language_zh: "中文",
+        language_ja: "日本語",
+        expand: "展開",
+        collapse: "折りたたむ",
+        copyright: "© 2025 ゲームセールエキスポ。全著作権所有。"
+      }
+    };
+
+    // 設定預設語系
+    let currentLanguage = "en";
+    // 儲存 CSV 讀取後的資料，方便語系切換時重建輪播
+    let featuredDealsData = [];
+    // 目前輪播索引
+    let currentCarouselIndex = 0;
+
+    // 更新頁面中所有含 data-i18n 標記的文字
+    function updateTranslations() {
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.getAttribute("data-i18n");
+        if (translations[currentLanguage][key]) {
+          el.textContent = translations[currentLanguage][key];
+        }
+      });
+      // 更新新聞切換按鈕文字
+      updateNewsToggleButtons();
+    }
+
+    // 依照當前語系及 CSV 資料生成 FEATURED DEALS 輪播（每次顯示 4 張卡片）
+    function generateFeaturedDeals(data) {
+      const container = document.getElementById("featured-deals-container");
+      container.innerHTML = ""; // 清空原有內容
+      const total = data.length;
+      // 取出 4 張卡片，如果超過資料長度則循環
+      for (let i = 0; i < 4; i++) {
+        const idx = (currentCarouselIndex + i) % total;
+        const row = data[idx];
+        // 根據語系選取標題
+        const title = row["title_" + currentLanguage] || row.title_en;
+        const price = parseFloat(row.price);
+        const bargainPrice = parseFloat(row.bargain_price);
+        const discount = Math.round((1 - bargainPrice / price) * 100);
+        // 建立卡片元素
+        const card = document.createElement("div");
+        card.className = "border border-gray-200 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow";
+
+        // 圖片與折扣標籤區
+        const imgWrapper = document.createElement("div");
+        imgWrapper.className = "relative h-48";
+        const link = document.createElement("a");
+        link.href = row.steamLink;
+        link.target = "_blank";
+        const img = document.createElement("img");
+        img.src = `/placeholder.svg?height=300&width=400&text=${encodeURIComponent(title)}`;
+        img.alt = title;
+        img.className = "object-cover absolute inset-0 w-full h-full";
+        link.appendChild(img);
+        imgWrapper.appendChild(link);
+        const discountTag = document.createElement("div");
+        discountTag.className = "absolute top-2 right-2 bg-orange-500 text-white px-2 py-1 rounded font-bold";
+        discountTag.textContent = "-" + discount + "%";
+        imgWrapper.appendChild(discountTag);
+        card.appendChild(imgWrapper);
+
+        // 卡片下半部資訊
+        const cardBody = document.createElement("div");
+        cardBody.className = "p-4";
+        const h3 = document.createElement("h3");
+        h3.className = "font-bold mb-1";
+        h3.textContent = title;
+        cardBody.appendChild(h3);
+        const infoDiv = document.createElement("div");
+        infoDiv.className = "flex items-center justify-between mb-2";
+        const priceDiv = document.createElement("div");
+        priceDiv.className = "flex items-center gap-2";
+        const originalPrice = document.createElement("span");
+        originalPrice.className = "line-through text-gray-500";
+        originalPrice.textContent = "$" + price.toFixed(2);
+        const bargainPriceEl = document.createElement("span");
+        bargainPriceEl.className = "text-orange-500 font-bold";
+        bargainPriceEl.textContent = "$" + bargainPrice.toFixed(2);
+        priceDiv.appendChild(originalPrice);
+        priceDiv.appendChild(bargainPriceEl);
+        infoDiv.appendChild(priceDiv);
+        const typeEl = document.createElement("span");
+        typeEl.className = "text-xs bg-gray-100 px-2 py-1 rounded";
+        typeEl.textContent = row.game_type;
+        infoDiv.appendChild(typeEl);
+        cardBody.appendChild(infoDiv);
+        const button = document.createElement("button");
+        button.className = "w-full bg-orange-500 hover:bg-orange-600 text-white";
+        button.textContent = translations[currentLanguage].add_to_cart;
+        cardBody.appendChild(button);
+        card.appendChild(cardBody);
+        container.appendChild(card);
+      }
+    }
+
+    // 讀取 CSV 檔案，並生成 Featured Deals 輪播
+    function loadCSV() {
+      Papa.parse("deals.csv", {
+        download: true,
+        header: true,
+        complete: function(results) {
+          featuredDealsData = results.data;
+          generateFeaturedDeals(featuredDealsData);
+        }
+      });
+    }
+
+    // 輪播控制：下一組與上一組
+    document.getElementById("next-deals").addEventListener("click", () => {
+      if (featuredDealsData.length) {
+        currentCarouselIndex = (currentCarouselIndex + 4) % featuredDealsData.length;
+        generateFeaturedDeals(featuredDealsData);
+      }
+    });
+    document.getElementById("prev-deals").addEventListener("click", () => {
+      if (featuredDealsData.length) {
+        currentCarouselIndex = (currentCarouselIndex - 4 + featuredDealsData.length) % featuredDealsData.length;
+        generateFeaturedDeals(featuredDealsData);
+      }
+    });
+
+    // News 區塊：切換展開／收起完整內容
+    function updateNewsToggleButtons() {
+      document.querySelectorAll(".news-toggle-btn").forEach(btn => {
+        // 找出同一個新聞區塊中隱藏/顯示的內容
+        const fullContent = btn.parentNode.parentNode.querySelector(".news-full-content");
+        if (fullContent && !fullContent.classList.contains("hidden")) {
+          btn.innerHTML = `<span>${translations[currentLanguage].collapse}</span>`;
+        } else {
+          btn.innerHTML = `<span>${translations[currentLanguage].expand}</span>`;
+        }
+      });
+    }
+    document.querySelectorAll(".news-toggle-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const fullContent = btn.parentNode.parentNode.querySelector(".news-full-content");
+        if (fullContent) {
+          fullContent.classList.toggle("hidden");
+          // 讓展開的新聞項目變大（可以用 scale 變換示意）
+          fullContent.classList.toggle("transform");
+          fullContent.classList.toggle("scale-105");
+          updateNewsToggleButtons();
+        }
+      });
+    });
+
+    // 初始載入：更新翻譯、讀取 CSV
+    document.addEventListener("DOMContentLoaded", () => {
+      updateTranslations();
+      loadCSV();
+    });
+
+    // 語言切換事件
+    document.getElementById("language-select").addEventListener("change", (e) => {
+      currentLanguage = e.target.value;
+      updateTranslations();
+      if (featuredDealsData.length) {
+        generateFeaturedDeals(featuredDealsData);
+      }
+    });
+  </script>
+</body>
+</html>
