@@ -515,7 +515,7 @@
         a.className = "flex items-center justify-center p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow";
         // 假設 CSV 中 logo 為圖片檔名，圖片存放在 /logos/ 目錄下，若 CSV 給出完整 URL 則可直接使用 row.logo
         const img = document.createElement("img");
-        img.src = `/logos/${row.logo}`;
+        img.src = `logos/${row.logo}`;
         img.alt = row.logo;
         img.width = 120;
         img.height = 80;
