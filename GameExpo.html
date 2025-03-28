@@ -424,7 +424,10 @@
         let imageUrl = "";
         if (match) {
           const appId = match[1];
-          imageUrl = `https://steamcdn-a.akamaihd.net/steam/apps/${appId}/library_600x900_2x.jpg`;
+		  //imageUrl = `https://steamcdn-a.akamaihd.net/steam/apps/${appId}/library_600x900_2x.jpg`;
+		  //https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2729360/header.jpg
+		  
+		  imageUrl = `https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/${appId}/header.jpg`;
         } else {
           imageUrl = `/placeholder.svg?height=300&width=400&text=${encodeURIComponent(title)}`;
         }
@@ -479,10 +482,10 @@
         infoDiv.appendChild(typeEl);
         cardBody.appendChild(infoDiv);
 
-        const button = document.createElement("button");
-        button.className = "w-full bg-orange-500 hover:bg-orange-600 text-white";
-        button.textContent = translations[currentLanguage].add_to_cart;
-        cardBody.appendChild(button);
+       // const button = document.createElement("button");
+       // button.className = "w-full bg-orange-500 hover:bg-orange-600 text-white";
+       // button.textContent = translations[currentLanguage].add_to_cart;
+       // cardBody.appendChild(button);
 
         card.appendChild(cardBody);
         container.appendChild(card);
