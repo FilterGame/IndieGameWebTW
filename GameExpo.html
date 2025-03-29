@@ -91,15 +91,14 @@
         <nav class="hidden md:flex items-center gap-6">
           <a href="#" data-i18n="home" class="text-white hover:text-orange-400 transition-colors">立即報名</a>
           <a href="#news-section" data-i18n="news" class="text-white hover:text-orange-400 transition-colors">NEWS</a>
-          <a href="#" data-i18n="deals" class="text-white hover:text-orange-400 transition-colors">DEALS</a>
-          <a href="#" data-i18n="games" class="text-white hover:text-orange-400 transition-colors">GAMES</a>
-          <a href="#" data-i18n="contact" class="text-white hover:text-orange-400 transition-colors">CONTACT</a>
+          <a href="#deals-section" data-i18n="games" class="text-white hover:text-orange-400 transition-colors">GAMES</a>
+          <a href="#contact-section" data-i18n="contact" class="text-white hover:text-orange-400 transition-colors">CONTACT</a>
         </nav>
         <div class="flex items-center gap-4">
           <!-- 語言切換下拉選單 -->
           <select id="language-select" class="bg-black text-white text-sm border border-orange-500 rounded px-1">
-            <option value="en" data-i18n="language_en">EN</option>
             <option value="zh" data-i18n="language_zh">中文</option>
+            <option value="en" data-i18n="language_en">EN</option>
             <option value="ja" data-i18n="language_ja">日本語</option>
           </select>
         </div>
@@ -135,7 +134,7 @@
       </section>
 
       <!-- Featured Deals 輪播區 (一次顯示 8 張) -->
-      <section class="py-12 bg-white">
+      <section id="deals-section" class="py-12 bg-white">
         <div class="container">
           <div class="flex items-center justify-between mb-8">
             <h2 data-i18n="featured_deals" class="text-2xl font-bold">FEATURED DEALS</h2>
@@ -219,7 +218,7 @@
       </section>
 
       <!-- Contact 與 Newsletter 區塊 -->
-      <section class="py-12 bg-gray-50">
+      <section id="contact-section" class="py-12 bg-gray-50">
         <div class="container">
           <div class="max-w-2xl mx-auto text-center">
             <h2 data-i18n="contact_us" class="text-2xl font-bold mb-4 flex flex-col items-center">
@@ -247,11 +246,13 @@
             <span data-i18n="logo_text" class="text-orange-500 font-bold">GAME SALE EXPO</span>
           </div>
           <div class="flex items-center gap-4">
-            <a href="#" data-i18n="privacy" class="text-gray-400 hover:text-white transition-colors">Privacy</a>
-            <a href="#" data-i18n="terms" class="text-gray-400 hover:text-white transition-colors">Terms</a>
-            <a href="#" data-i18n="about" class="text-gray-400 hover:text-white transition-colors">About</a>
-            <a href="#" data-i18n="footer_contact" class="text-gray-400 hover:text-white transition-colors">Contact</a>
+			<a href="#" data-i18n="organizer" class="text-gray-400 ">舉辦單位:</a>
+            <a href="https://leojuan1234.wordpress.com/" target="_blank" class="text-gray-400 hover:text-white transition-colors">焊蛙遊戲</a>
+            <a href="https://linktr.ee/yohcanstudio" target="_blank" class="text-gray-400 hover:text-white transition-colors">葉開罐工作室</a>
+            <a href="https://www.arcadegalaxy.space/" target="_blank" class="text-gray-400 hover:text-white transition-colors">第九商行</a>
+            <a href="https://x.com/FilterGame_Dev/" target="_blank" class="text-gray-400 hover:text-white transition-colors">FilterGame</a>
           </div>
+		<!--  
           <div class="flex items-center gap-4">
             <a href="#" class="text-gray-400 hover:text-white transition-colors">
               <div class="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center">X</div>
@@ -263,6 +264,8 @@
               <div class="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center">in</div>
             </a>
           </div>
+		  -->
+		  
         </div>
         <div data-i18n="copyright" class="text-center text-gray-500 text-sm mt-8">© 2025 East Asia Indie Games Celebration. All rights reserved.</div>
       </div>
@@ -309,7 +312,8 @@
         collapse: "Collapse",
         not_released: "Game Not Yet Released",
         demo_open: "Demo Version Available!",
-        copyright: "© 2025 East Asia Indie Games Celebration. All rights reserved."
+        copyright: "© 2025 East Asia Indie Games Celebration. All rights reserved.",
+		organizer: "Organizer:"
       },
       zh: {
         logo_text: "東亞獨立遊戲慶典",
@@ -347,7 +351,8 @@
         collapse: "收起",
         not_released: "遊戲尚未推出",
         demo_open: "試玩版開放中!",
-        copyright: "© 2025 東亞獨立遊戲慶典。版權所有。"
+        copyright: "© 2025 東亞獨立遊戲慶典。版權所有。",
+		organizer: "舉辦單位:"
       },
       ja: {
         logo_text: "東亞インディーゲームセレブレーション",
@@ -385,7 +390,8 @@
         collapse: "折りたたむ",
         not_released: "ゲーム未発売",
         demo_open: "体験版公開中！",
-        copyright: "© 2025 東亞インディーゲームセレブレーション。全著作権所有。"
+        copyright: "© 2025 東亞インディーゲームセレブレーション。全著作権所有。",
+		organizer: "主催者:"
       }
     };
 
@@ -531,16 +537,19 @@
         container.appendChild(a);
       });
     }
-    function loadPublishersCSV() {
-      Papa.parse("publishers.csv", {
-        download: true,
-        header: true,
-        complete: function(results) {
-          publishersData = results.data;
-          generatePublishers(publishersData);
-        }
-      });
-    }
+	
+	function loadPublishersCSV() {
+	  Papa.parse("publishers.csv", {
+		download: true,
+		header: true,
+		skipEmptyLines: true,
+		transformHeader: header => header.trim(), // 自動去除 header 的空白
+		complete: function(results) {
+		  publishersData = results.data;
+		  generatePublishers(publishersData);
+		}
+	  });
+	}
 
     // 輪播按鈕事件（以 8 個一組）
     document.getElementById("next-deals").addEventListener("click", () => {
