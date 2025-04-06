@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>網站轉址提示</title>
+  <!-- 引入 Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* 動畫：淡入與向下滑入 */
+    @keyframes fadeSlide {
+      0% { opacity: 0; transform: translateY(-20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .fade-slide {
+      animation: fadeSlide 0.6s ease-out forwards;
+    }
+
+    /* 動畫：淡入與縮放 */
+    @keyframes fadeInScale {
+      0% { opacity: 0; transform: scale(0.9); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    .fade-in-scale {
+      animation: fadeInScale 0.5s ease-out forwards;
+      animation-delay: 0.2s;
+      animation-fill-mode: both;
+    }
+
+    /* 動畫：簡單淡入 */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .fade-in {
+      animation: fadeIn 0.5s ease-out forwards;
+      animation-delay: 0.4s;
+      animation-fill-mode: both;
+    }
+
+    /* 動畫：向上滑入 */
+    @keyframes slideUp {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .slide-up {
+      animation: slideUp 0.5s ease-out forwards;
+      animation-delay: 0.6s;
+      animation-fill-mode: both;
+    }
+
+    /* 旋轉動畫 */
+    @keyframes rotate360 {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .rotate {
+      animation: rotate360 20s linear infinite;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-rose-50 to-teal-50 flex items-center justify-center p-4">
+  <div class="max-w-md w-full bg-white rounded-2xl shadow-xl overflow-hidden">
+    <div class="p-8">
+      <!-- 圖標區塊 -->
+      <div class="flex justify-center mb-6 fade-slide">
+        <div class="w-20 h-20 bg-rose-100 rounded-full flex items-center justify-center">
+          <div class="w-16 h-16 bg-gradient-to-r from-rose-400 to-teal-400 rounded-full flex items-center justify-center rotate">
+            <div class="w-12 h-12 bg-white rounded-full"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 標題 -->
+      <h1 class="text-3xl font-bold text-center text-gray-800 mb-6 fade-in-scale">
+        我們搬新家了
+      </h1>
+
+      <!-- 內容區塊 -->
+      <div class="space-y-6 fade-in">
+        <!-- 舊網址 -->
+        <div class="space-y-2">
+          <p class="text-sm text-gray-500">舊網址:</p>
+          <a id="old-url" href="https://filtergame.github.io/IndieGameWebTW/" class="block p-3 bg-gray-50 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors text-gray-700 text-center">
+            https://filtergame.github.io/IndieGameWebTW/
+          </a>
+        </div>
+        <!-- 新網址 -->
+        <div class="space-y-2">
+          <p class="text-sm text-gray-500">新網址:</p>
+          <a id="new-url" href="https://filtergame.com/IndieGameTW/IndieGameTW.html" class="block p-3 bg-teal-50 rounded-lg border border-teal-200 hover:bg-teal-100 transition-colors text-teal-700 text-center font-medium">
+            https://filtergame.com/IndieGameTW/IndieGameTW.html
+          </a>
+        </div>
+        <!-- 進度條與倒數計時 -->
+        <div class="pt-4">
+          <div id="progress" class="h-1 bg-gradient-to-r from-rose-400 to-teal-400 rounded-full" style="width: 100%;"></div>
+          <p id="countdown" class="text-center text-sm text-gray-500 mt-2">3 秒後自動跳轉至新網址</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 頁尾提示 -->
+    <div class="bg-gray-50 p-4 text-center text-sm text-gray-500 slide-up">
+      如果沒有自動跳轉，請點擊上方新網址連結
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      var countdown = 3;
+      var newUrl = "https://new-website.com";
+      var countdownElem = document.getElementById("countdown");
+      var progressElem = document.getElementById("progress");
+
+      // 每秒更新一次倒數與進度條
+      var timer = setInterval(function(){
+        countdown--;
+        if (countdown <= 0) {
+          clearInterval(timer);
+          window.location.href = newUrl;
+        } else {
+          countdownElem.textContent = countdown + " 秒後自動跳轉至新網址";
+          progressElem.style.width = (countdown / 3 * 100) + "%";
+        }
+      }, 1000);
+    })();
+  </script>
+</body>
+</html>
