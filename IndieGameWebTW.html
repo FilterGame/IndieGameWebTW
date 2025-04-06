@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- mobile-first: 讓 viewport 適應裝置寬度 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IndieGameWebTW - 台灣steam遊戲列表!</title>
+	<meta name="description" content="IndieGameWebTW | FilterGame IndieGame Dev Site"/>
+
+	<meta property="og:title" content="IndieGameWebTW | 台灣Steam獨立遊戲列表!">
+	<meta property="og:description" content="IndieGameWebTW | 由FilterGame維護的 台灣獨立遊戲列表!">
+	<meta property="og:image" content="https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2325390/header.jpg">
+	<meta property="og:url" content="https://filtergame.github.io/FilterGameWeb/">
+	<meta property="og:type" content="website">
+
+
+    <link rel="stylesheet" href="style.css" />
+    <!-- Google tag (gtag.js) -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-FB5PSSPR8H"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-FB5PSSPR8H");
+    </script>
+    <!-- 引入 Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-white">
+    <!-- Navigation 區域 -->
+    <nav class="bg-emerald-500 text-white sticky top-0 z-50">
+      <div
+        class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center"
+      >
+        <!-- 左側導覽連結 -->
+        <div
+          class="flex flex-col md:flex-row md:space-x-8 space-y-2 md:space-y-0"
+        >
+          <a
+            href="http://www.filtergame.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="hover:text-emerald-100"
+            data-navtext
+            data-en="FilterGame"
+            data-zh="FilterGame"
+            data-ja="FilterGame"
+            >FilterGame</a
+          >
+          <a
+            href="https://forms.gle/GLXSFuxTDkaQ6MLEA"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="hover:text-emerald-100"
+            data-navtext
+            data-en="Register your Steam game!"
+            data-zh="註冊你的steam遊戲"
+            data-ja="あなたのSteamゲームを登録しよう！"
+            >註冊你的steam遊戲</a
+          >
+          <a
+            href="https://forms.gle/o8EyAosyxytMJBhJ7"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="hover:text-emerald-100"
+            data-navtext
+            data-en="Submit message"
+            data-zh="投稿訊息"
+            data-ja="投稿メッセージ"
+            >投稿訊息</a
+          >
+          <a
+            href="https://discord.gg/xQaCPAbe"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="hover:text-emerald-100"
+            data-navtext
+            data-en="Discord"
+            data-zh="Discord"
+            data-ja="Discord"
+            >Discord</a
+          >
+          <a
+            href="#"
+            id="update-modal-btn"
+            class="hover:text-emerald-100"
+            data-navtext
+            data-en="Update Resume & Info"
+            data-zh="更新履歷&說明"
+            data-ja="更新履歴＆説明"
+            >更新履歷&說明</a
+          >
+        </div>
+        <!-- 彈幕開關按鈕 -->
+        <button
+          id="danmaku-toggle"
+          class="bg-emerald-500 text-white px-3 py-1 rounded"
+        >
+          彈幕 ON
+        </button>
+        <!-- 右側語言切換 -->
+        <div id="language-switcher" class="flex space-x-4 mt-2 md:mt-0">
+          <button class="lang-btn" data-lang="zh">中文</button>
+          <button class="lang-btn" data-lang="en">English</button>
+          <button class="lang-btn" data-lang="ja">日本語</button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- CSV 按鈕區 -->
+    <div
+      id="csv-buttons"
+      class="max-w-7xl mx-auto px-4 py-2 flex flex-col md:flex-row gap-4 md:space-x-4 md:sticky md:top-14 z-50"
+    >
+      <button
+        class="csv-btn"
+        data-csv="cards2.csv"
+        data-random="true"
+        data-navtext
+        data-en="Taiwan Domestic Steam Games - In Development"
+        data-zh="台灣國產steam遊戲-研發中列表"
+        data-ja="台湾国内Steamゲーム - 開発中リスト"
+      >
+        台灣國產steam遊戲-研發中列表
+      </button>
+      <button
+        class="csv-btn"
+        data-csv="cards4.csv"
+        data-random="true"
+        data-navtext
+        data-en="Taiwanese Steam Games - Released List (Feel free to add more!)"
+        data-zh="台灣國產steam遊戲-已發售列表(歡迎補充)"
+        data-ja="台湾産Steamゲーム - 発売済みリスト（追加歓迎！）"
+      >
+        台灣國產steam遊戲-已發售列表(歡迎補充)
+      </button>
+      <button
+        class="csv-btn"
+        data-csv="cards3.csv"
+        data-random="true"
+        data-navtext
+        data-en="Overseas Partner Steam List"
+        data-zh="海外友商steam列表"
+        data-ja="海外パートナーSteamリスト"
+      >
+        海外友商steam列表
+      </button>
+	          <button
+        class="csv-btn"
+        data-csv="cards_tigs_tw.csv"
+        data-random="true"
+        data-navtext
+        data-en="[New]Tokyo IndieGames Summit 2025- Taiwan Games"
+        data-zh="[New]Tokyo IndieGames Summit 2025-台灣遊戲列表"
+        data-ja="[New]Tokyo IndieGames Summit 2025- 台湾ゲーム一覧"
+      >
+        [New]Tokyo IndieGames Summit 2025-台灣遊戲列表
+      </button>
+
+      <button
+        class="csv-btn"
+        data-csv="cards.csv"
+        data-navtext
+        data-en="2025 Taipei Game Show - Taiwan Games"
+        data-zh="2025台北電玩展-台灣遊戲列表"
+        data-ja="2025台ペイゲームショー - 台湾ゲーム一覧"
+      >
+        2025台北電玩展-台灣遊戲列表
+      </button>
+
+    </div>
+
+    <!-- Main 內容區 -->
+    <main class="max-w-7xl mx-auto px-4 py-8">
+      <h1 id="page-title" class="text-4xl font-medium text-gray-800 mb-2"></h1>
+      <!-- 調整網格設定：手機預設 2 欄，桌機 3 欄 -->
+      <div
+        id="game-grid"
+        class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4"
+      ></div>
+    </main>
+
+    <!-- 將彈幕容器移至 body 固定定位 -->
+    <div
+      id="danmaku-container"
+      class="pointer-events-none fixed inset-0 z-10"
+    ></div>
+
+    <!-- Modal Overlay -->
+    <div id="modal-overlay">
+      <div
+        id="modal-content"
+        data-navtext
+        data-en="Hello everyone! This is KO from FilterGame ＼(^ω^＼) <br> Since I’ve received a lot of feedback and messages, I’d like to clarify a few things here.<br><br>1.Only Steam games are eligible for listing.<br>2.Adult games are not currently accepted.<br>3.Some older Steam games cannot be listed yet due to missing images.<br>4.UTM tracking is not supported at the moment.<br>5.The website will continue in its current format for a while,serving as a game listing platform.<br>6.Steam game submissions are welcome!<br>Submitted games will be added to the list more quickly.<br><br>Thank you all for your support!"
+        data-zh="大家好,這裡是FilterGame的KO ＼(^ω^＼) <br> 因為收到很多的意見與來信,這邊做一個統一說明<br><br> 1.收錄必須是steam遊戲<br> 2.目前沒有收成人遊戲<br> 3.有些過早的steam遊戲因為缺乏圖片無法顯示暫時無法收入<br> 4.utm功能暫時不支援<br> 5.網站會維持現在的方式一段時間,以遊戲清單的方式給大家服務<br> 6.歡迎大家提交steam遊戲,提交的遊戲會比較快出現<br><br>感謝大家的支持"
+        data-ja="皆さん、こんにちは！FilterGameのKOです ＼(^ω^＼)<br>たくさんのご意見やお問い合わせをいただいたので、こちらでまとめて説明します。<br><br>1.登録対象はSteamゲームのみ です。<br>2.現在、アダルトゲームは収録していません。<br>3.古いSteamゲーム の中には、画像が不足しているため表示できず、その関係で一時的に登録できないものもあります。<br>4.UTM機能は現在サポートしていません。<br>5.サイトは しばらく現状の形 で運営し、<br>ゲームリストとしてサービスを提供していきます。<br>6.Steamゲームの登録を歓迎しています！提出されたゲームは優先的にリストへ反映されます。<br><br>皆さんのご支援に感謝します！"
+      >
+        大家好,這裡是FilterGame的KO ＼(^ω^＼) <br />
+        因為收到很多的意見與來信,這邊做一個統一說明<br /><br />
+        1.收錄必須是steam遊戲<br />
+        2.目前沒有收成人遊戲<br />
+        3.有些過早的steam遊戲因為缺乏圖片無法顯示暫時無法收入<br />
+        4.utm功能暫時不支援<br />
+        5.網站會維持現在的方式一段時間,以遊戲清單的方式給大家服務<br />
+        6.歡迎大家提交steam遊戲,提交的遊戲會比較快出現<br /><br />感謝大家的支持
+      </div>
+    </div>
+
+    <script src="app.js" type="module"></script>
+  </body>
+</html>
