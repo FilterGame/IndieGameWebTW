@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title data-i18n="hero_title">GAME SALE EXPO 2025 - The Biggest Game Sale Event</title>
+  <meta name="description" content="Discover amazing deals on your favorite games at the Game Sale Expo 2025. Limited time offers and exclusive bundles available." />
+  <meta name="generator" content="v0.dev" />
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet" />
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- PapaParse 用於解析 CSV -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+  <style>
+    /* 自定義 CSS 變數 (globals.css) */
+    :root {
+      --background: 0 0% 100%;
+      --foreground: 0 0% 3.9%;
+      --card: 0 0% 100%;
+      --card-foreground: 0 0% 3.9%;
+      --popover: 0 0% 100%;
+      --popover-foreground: 0 0% 3.9%;
+      --primary: 24 100% 50%;
+      --primary-foreground: 0 0% 98%;
+      --secondary: 0 0% 96.1%;
+      --secondary-foreground: 0 0% 9%;
+      --muted: 0 0% 96.1%;
+      --muted-foreground: 0 0% 45.1%;
+      --accent: 0 0% 96.1%;
+      --accent-foreground: 0 0% 9%;
+      --destructive: 0 84.2% 60.2%;
+      --destructive-foreground: 0 0% 98%;
+      --border: 0 0% 89.8%;
+      --input: 0 0% 89.8%;
+      --ring: 24 100% 50%;
+      --radius: 0.5rem;
+    }
+    .dark {
+      --background: 0 0% 3.9%;
+      --foreground: 0 0% 98%;
+      --card: 0 0% 3.9%;
+      --card-foreground: 0 0% 98%;
+      --popover: 0 0% 3.9%;
+      --popover-foreground: 0 0% 98%;
+      --primary: 24 100% 50%;
+      --primary-foreground: 0 0% 98%;
+      --secondary: 0 0% 14.9%;
+      --secondary-foreground: 0 0% 98%;
+      --muted: 0 0% 14.9%;
+      --muted-foreground: 0 0% 63.9%;
+      --accent: 0 0% 14.9%;
+      --accent-foreground: 0 0% 98%;
+      --destructive: 0 62.8% 30.6%;
+      --destructive-foreground: 0 0% 98%;
+      --border: 0 0% 14.9%;
+      --input: 0 0% 14.9%;
+      --ring: 24 100% 50%;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: hsl(var(--background));
+      color: hsl(var(--foreground));
+    }
+    .container {
+      max-width: 80rem;
+      margin-left: auto;
+      margin-right: auto;
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+    /* 遊戲卡片圖片放大效果 */
+    .zoom-image {
+      transition: transform 0.5s ease;
+    }
+    .zoom-image:hover {
+      transform: scale(1.2);
+    }
+    /* 淡入動畫 */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+  <div class="flex min-h-screen flex-col">
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-black border-b border-orange-500">
+      <div class="container flex h-16 items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span data-i18n="logo_text" class="text-orange-500 font-bold text-xl">East Asia Indie Games Celebration</span>
+        </div>
+        <nav class="hidden md:flex items-center gap-6">
+          <a href="#" data-i18n="home" class="text-white hover:text-orange-400 transition-colors">立即報名</a>
+          <a href="#news-section" data-i18n="news" class="text-white hover:text-orange-400 transition-colors">NEWS</a>
+          <a href="#deals-section" data-i18n="games" class="text-white hover:text-orange-400 transition-colors">GAMES</a>
+          <a href="#contact-section" data-i18n="contact" class="text-white hover:text-orange-400 transition-colors">CONTACT</a>
+        </nav>
+        <div class="flex items-center gap-4">
+          <!-- 語言切換下拉選單 -->
+          <select id="language-select" class="bg-black text-white text-sm border border-orange-500 rounded px-1">
+            <option value="zh" data-i18n="language_zh">中文</option>
+            <option value="en" data-i18n="language_en">EN</option>
+            <option value="ja" data-i18n="language_ja">日本語</option>
+          </select>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1">
+
+      <!-- Featured Deals 區 -->
+      <section id="deals-section" class="py-12 bg-white">
+        <div class="container">
+          <div class="flex items-center justify-between mb-8">
+            <h2 data-i18n="featured_deals" class="text-2xl font-bold">FEATURED DEALS</h2>
+          </div>
+          <div id="featured-deals-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- 遊戲卡片由 JS 動態注入 -->
+          </div>
+        </div>
+      </section>
+
+    <!-- Footer -->
+    <footer class="bg-black text-white border-t border-orange-500">
+      <div class="container py-8">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+          <div class="flex items-center gap-2">
+            <span data-i18n="logo_text" class="text-orange-500 font-bold">GAME SALE EXPO</span>
+          </div>
+          <div class="flex items-center gap-4">
+            <a href="#" data-i18n="organizer" class="text-gray-400 ">舉辦單位:</a>
+            <a href="https://leojuan1234.wordpress.com/" target="_blank" class="text-gray-400 hover:text-white transition-colors">焊蛙遊戲</a>
+            <a href="https://linktr.ee/yohcanstudio" target="_blank" class="text-gray-400 hover:text-white transition-colors">葉開罐工作室</a>
+            <a href="https://www.arcadegalaxy.space/" target="_blank" class="text-gray-400 hover:text-white transition-colors">第九商行</a>
+            <a href="https://x.com/FilterGame_Dev/" target="_blank" class="text-gray-400 hover:text-white transition-colors">FilterGame</a>
+          </div>
+        </div>
+        <div data-i18n="copyright" class="text-center text-gray-500 text-sm mt-8">© 2025 East Asia Indie Games Celebration. All rights reserved.</div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- JavaScript：多國語系、Featured Deals 隨機顯示、淡入動畫 -->
+  <script>
+    const translations = {
+      /* ...（略：維持原有 translations 內容）... */
+    };
+    let currentLanguage = "zh";
+    let featuredDealsData = [];
+
+    function updateTranslations() {
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.getAttribute("data-i18n");
+        if (translations[currentLanguage][key]) {
+          el.textContent = translations[currentLanguage][key];
+        }
+      });
+    }
+
+    // 監測 .fade-in 卡片，首次進入視窗時加上 .visible
+    function initFadeInAnimation() {
+      const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            obs.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1 });
+      document.querySelectorAll(".fade-in").forEach(el => observer.observe(el));
+    }
+
+    // 一次顯示所有，並隨機排序
+    function generateFeaturedDeals(data) {
+      const container = document.getElementById("featured-deals-container");
+      container.innerHTML = "";
+      // Fisher–Yates 隨機洗牌
+      const shuffled = data.slice();
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      shuffled.forEach(row => {
+        const title = row["title_" + currentLanguage] || row.title_en;
+        const price = parseFloat(row.price);
+        const bargainPrice = parseFloat(row.bargain_price);
+        const match = row.steamLink.match(/\/app\/(\d+)/);
+        const imageUrl = match
+          ? `https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/${match[1]}/header.jpg`
+          : `/placeholder.svg?height=300&width=400&text=${encodeURIComponent(title)}`;
+
+        const card = document.createElement("div");
+        card.className = "border border-gray-200 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow fade-in";
+
+        // 圖片區
+        const imgWrapper = document.createElement("div");
+        imgWrapper.className = "relative h-48";
+        const link = document.createElement("a");
+        link.href = row.steamLink;
+        link.target = "_blank";
+        const img = document.createElement("img");
+        img.src = imageUrl;
+        img.alt = title;
+        img.className = "object-cover absolute inset-0 w-full h-full zoom-image";
+        link.appendChild(img);
+        imgWrapper.appendChild(link);
+        // 折扣標籤
+        if (price > 0 && bargainPrice > 0 && price !== bargainPrice) {
+          const discount = Math.round((1 - bargainPrice / price) * 100);
+          const discountTag = document.createElement("div");
+          discountTag.className = "absolute top-2 right-2 bg-orange-500 text-white px-2 py-1 rounded font-bold";
+          discountTag.textContent = `-${discount}%`;
+          imgWrapper.appendChild(discountTag);
+        }
+        card.appendChild(imgWrapper);
+
+        // 資訊區
+        const cardBody = document.createElement("div");
+        cardBody.className = "p-4";
+        const h3 = document.createElement("h3");
+        h3.className = "font-bold mb-1";
+        h3.textContent = title;
+        cardBody.appendChild(h3);
+
+        const infoDiv = document.createElement("div");
+        infoDiv.className = "flex items-center justify-between mb-2";
+        if (price === -1 || bargainPrice === -1) {
+          infoDiv.textContent = translations[currentLanguage].not_released;
+        } else if (price === -2 || bargainPrice === -2) {
+          infoDiv.textContent = translations[currentLanguage].demo_open;
+        } else if (price === bargainPrice) {
+          infoDiv.textContent = `$${price.toFixed(2)}`;
+        } else {
+          const priceDiv = document.createElement("div");
+          priceDiv.className = "flex items-center gap-2";
+          const originalPrice = document.createElement("span");
+          originalPrice.className = "line-through text-gray-500";
+          originalPrice.textContent = `$${price.toFixed(2)}`;
+          const bargainPriceEl = document.createElement("span");
+          bargainPriceEl.className = "text-orange-500 font-bold";
+          bargainPriceEl.textContent = `$${bargainPrice.toFixed(2)}`;
+          priceDiv.appendChild(originalPrice);
+          priceDiv.appendChild(bargainPriceEl);
+          infoDiv.appendChild(priceDiv);
+        }
+        cardBody.appendChild(infoDiv);
+        card.appendChild(cardBody);
+
+        container.appendChild(card);
+      });
+      // 啟動淡入動畫監測
+      initFadeInAnimation();
+    }
+
+    // 載入 CSV 並產生
+    function loadDealsCSV() {
+      Papa.parse("deals.csv", {
+        download: true,
+        header: true,
+        complete: function(results) {
+          featuredDealsData = results.data;
+          generateFeaturedDeals(featuredDealsData);
+        }
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      updateTranslations();
+      loadDealsCSV();
+      // 如果有 loadPublishersCSV() 可留，否則可移除
+      if (typeof loadPublishersCSV === "function") {
+        loadPublishersCSV();
+      }
+    });
+
+    // 語言切換
+    document.getElementById("language-select").addEventListener("change", e => {
+      currentLanguage = e.target.value;
+      updateTranslations();
+      if (featuredDealsData.length) {
+        generateFeaturedDeals(featuredDealsData);
+      }
+    });
+  </script>
+</body>
+</html>
