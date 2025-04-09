@@ -153,21 +153,137 @@
   <!-- JavaScript：多國語系、Featured Deals 隨機顯示、淡入動畫 -->
   <script>
     const translations = {
-      /* ...（略：維持原有 translations 內容）... */
+      en: {
+        logo_text: "East Asia Indie Games Celebration",
+        home: "Home",
+        news: "News",
+        deals: "Deals",
+        games: "Games",
+        contact: "Contact",
+        browse_deals: "Register Now",
+        hero_title: "East Asia Indie Games Celebration 2025",
+        hero_date: "August 5, 2025 - August 19, 2025",
+        hero_description: "We sincerely invite independent game development teams from across East Asia (including Taiwan, China, Japan, Korea, Hong Kong, Macau, and other East Asian regions) to participate in this grand online game sale event and showcase our rich and diverse creative game culture.",
+        featured_deals: "Games & Special Offers",
+        news_section: "News",
+        news_item: "East Asia Indie Games Celebration - Registration Open!",
+        news_item2: "East Asia Indie Games Celebration - First Batch of Participants Announced",
+        news_full_item_1: "We sincerely invite independent game development teams from across East Asia (including Taiwan, China, Japan, Korea, Hong Kong, Macau, and other East Asian regions) to participate in this grand online game sale event. Please submit your game details by April 4, 2025 (GMT+8) for initial approval.",
+        news_full_item_2: "East Asia Indie Games Celebration - First Batch of Participants Announced!",
+        news_full_item_3: "Full content of news item 3. (Sample text, please modify as needed.)",
+        participating_publishers: "Participating Publishers",
+        contact_us: "Contact Us",
+        contact_description: "If you have any questions about the event, please contact our team for more information.",
+        contact_button: "Contact Us",
+        newsletter_title: "Game Sale Expo Newsletter",
+        newsletter_description: "Subscribe to our newsletter to receive the latest offers and event updates.",
+        subscribe: "Subscribe",
+        privacy: "Privacy",
+        terms: "Terms",
+        about: "About",
+        footer_contact: "Contact",
+        language_en: "EN",
+        language_zh: "中文",
+        language_ja: "日本語",
+        expand: "Expand",
+        collapse: "Collapse",
+        not_released: "Game Not Yet Released",
+        demo_open: "Demo Version Available!",
+        copyright: "© 2025 East Asia Indie Games Celebration. All rights reserved.",
+        organizer: "Organizer:"
+      },
+      zh: {
+        logo_text: "東亞獨立遊戲慶典",
+        home: "首頁",
+        news: "新聞",
+        deals: "特賣",
+        games: "遊戲",
+        contact: "聯絡",
+        browse_deals: "立即報名",
+        hero_title: "東亞獨立遊戲慶典 2025",
+        hero_date: "2025年8月5日至2025年8月19日",
+        hero_description: "我們誠摯邀請來自東亞各地（包含台灣、中國、日本、韓國、香港、澳門及其他東亞區域）的獨立遊戲開發團隊，共同參與這場盛大的線上遊戲特賣會，展現我們豐富多元的創意遊戲文化。",
+        featured_deals: "遊戲&特色優惠",
+        news_section: "新聞",
+        news_item: "東亞獨立遊戲慶典-報名開始!",
+        news_item2: "東亞獨立遊戲慶典-公布第一批參展名單",
+        news_full_item_1: "我們誠摯邀請來自東亞各地（包含台灣、中國、日本、韓國、香港、澳門及其他東亞區域）的獨立遊戲開發團隊，共同參與這場盛大的線上遊戲特賣會，展現我們豐富多元的創意遊戲文化。請於2025年4月4日前填寫遊戲資料。",
+        news_full_item_2: "東亞獨立遊戲慶典-公布第一批參展名單!",
+        news_full_item_3: "新聞項目 3 的完整內容。示例文本，請根據需求修改。",
+        participating_publishers: "參與廠商",
+        contact_us: "聯絡我們",
+        contact_description: "對於遊戲特賣博覽有疑問？請聯絡我們的團隊獲得更多資訊。",
+        contact_button: "聯絡我們",
+        newsletter_title: "遊戲特賣博覽電子報",
+        newsletter_description: "訂閱我們的電子報，獲得最新優惠和活動資訊。",
+        subscribe: "訂閱",
+        privacy: "隱私",
+        terms: "條款",
+        about: "關於",
+        footer_contact: "聯絡",
+        language_en: "EN",
+        language_zh: "中文",
+        language_ja: "日本語",
+        expand: "展開",
+        collapse: "收起",
+        not_released: "遊戲尚未推出",
+        demo_open: "試玩版開放中!",
+        copyright: "© 2025 東亞獨立遊戲慶典。版權所有。",
+        organizer: "舉辦單位:"
+      },
+      ja: {
+        logo_text: "東亞インディーゲームセレブレーション",
+        home: "ホーム",
+        news: "ニュース",
+        deals: "セール",
+        games: "ゲーム",
+        contact: "連絡先",
+        browse_deals: "今すぐ申し込む",
+        hero_title: "東亞インディーゲームセレブレーション 2025",
+        hero_date: "2025年8月5日〜2025年8月19日",
+        hero_description: "台湾、中国、日本、韓国、香港、マカオ、その他東亞地域のインディーゲーム開発チームの皆様を心よりご招待し、この盛大なオンラインゲームセールイベントで多彩なクリエイティブ文化を発信していただきます。",
+        featured_deals: "ゲーム＆特別オファー",
+        news_section: "ニュース",
+        news_item: "東亞インディーゲームセレブレーション－募集開始！",
+        news_item2: "東亞インディーゲームセレブレーション－第一陣の参加者発表",
+        news_full_item_1: "台湾、中国、日本、韓国、香港、マカオ、その他東亞地域のインディーゲーム開発チームの皆様を心よりご招待いたします。2025年4月4日までにゲーム情報を提出してください。",
+        news_full_item_2: "東亞インディーゲームセレブレーション－第一陣の参加者発表！",
+        news_full_item_3: "ニュース項目3の完全な内容。（サンプルテキスト、必要に応じて修正してください。）",
+        participating_publishers: "参加出版社",
+        contact_us: "お問い合わせ",
+        contact_description: "イベントに関するご質問は、ぜひ当チームまでお問い合わせください。",
+        contact_button: "お問い合わせ",
+        newsletter_title: "ゲームセールエキスポ ニュースレター",
+        newsletter_description: "最新のオファーとイベント情報を受け取るために、ニュースレターにご登録ください。",
+        subscribe: "購読",
+        privacy: "プライバシー",
+        terms: "利用規約",
+        about: "概要",
+        footer_contact: "お問い合わせ",
+        language_en: "EN",
+        language_zh: "中文",
+        language_ja: "日本語",
+        expand: "展開",
+        collapse: "折りたたむ",
+        not_released: "ゲーム未発売",
+        demo_open: "体験版公開中！",
+        copyright: "© 2025 東亞インディーゲームセレブレーション。全著作権所有。",
+        organizer: "主催者:"
+      }
     };
+
     let currentLanguage = "zh";
     let featuredDealsData = [];
 
     function updateTranslations() {
       document.querySelectorAll("[data-i18n]").forEach(el => {
         const key = el.getAttribute("data-i18n");
-        if (translations[currentLanguage][key]) {
+        if (translations[currentLanguage] && translations[currentLanguage][key]) {
           el.textContent = translations[currentLanguage][key];
         }
       });
     }
 
-    // 監測 .fade-in 卡片，首次進入視窗時加上 .visible
     function initFadeInAnimation() {
       const observer = new IntersectionObserver((entries, obs) => {
         entries.forEach(entry => {
@@ -180,11 +296,10 @@
       document.querySelectorAll(".fade-in").forEach(el => observer.observe(el));
     }
 
-    // 一次顯示所有，並隨機排序
     function generateFeaturedDeals(data) {
       const container = document.getElementById("featured-deals-container");
       container.innerHTML = "";
-      // Fisher–Yates 隨機洗牌
+      // 隨機洗牌
       const shuffled = data.slice();
       for (let i = shuffled.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -202,7 +317,7 @@
         const card = document.createElement("div");
         card.className = "border border-gray-200 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow fade-in";
 
-        // 圖片區
+        // 圖片
         const imgWrapper = document.createElement("div");
         imgWrapper.className = "relative h-48";
         const link = document.createElement("a");
@@ -214,7 +329,7 @@
         img.className = "object-cover absolute inset-0 w-full h-full zoom-image";
         link.appendChild(img);
         imgWrapper.appendChild(link);
-        // 折扣標籤
+
         if (price > 0 && bargainPrice > 0 && price !== bargainPrice) {
           const discount = Math.round((1 - bargainPrice / price) * 100);
           const discountTag = document.createElement("div");
@@ -224,7 +339,7 @@
         }
         card.appendChild(imgWrapper);
 
-        // 資訊區
+        // 資訊
         const cardBody = document.createElement("div");
         cardBody.className = "p-4";
         const h3 = document.createElement("h3");
@@ -258,11 +373,9 @@
 
         container.appendChild(card);
       });
-      // 啟動淡入動畫監測
       initFadeInAnimation();
     }
 
-    // 載入 CSV 並產生
     function loadDealsCSV() {
       Papa.parse("deals.csv", {
         download: true,
@@ -277,19 +390,13 @@
     document.addEventListener("DOMContentLoaded", () => {
       updateTranslations();
       loadDealsCSV();
-      // 如果有 loadPublishersCSV() 可留，否則可移除
-      if (typeof loadPublishersCSV === "function") {
-        loadPublishersCSV();
-      }
+      if (typeof loadPublishersCSV === "function") loadPublishersCSV();
     });
 
-    // 語言切換
     document.getElementById("language-select").addEventListener("change", e => {
       currentLanguage = e.target.value;
       updateTranslations();
-      if (featuredDealsData.length) {
-        generateFeaturedDeals(featuredDealsData);
-      }
+      if (featuredDealsData.length) generateFeaturedDeals(featuredDealsData);
     });
   </script>
 </body>
