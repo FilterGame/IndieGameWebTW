@@ -416,7 +416,7 @@
       const container = document.getElementById("featured-deals-container");
       container.innerHTML = "";
       const total = data.length;
-      for (let i = 0; i < 12; i++) {
+      for (let i = 0; i < 16; i++) {
         const idx = (currentCarouselIndex + i) % total;
         const row = data[idx];
         const title = row["title_" + currentLanguage] || row.title_en;
@@ -545,13 +545,13 @@
     // 輪播按鈕事件（以 8 個一組）
     document.getElementById("next-deals").addEventListener("click", () => {
       if (featuredDealsData.length) {
-        currentCarouselIndex = (currentCarouselIndex + 12) % featuredDealsData.length;
+        currentCarouselIndex = (currentCarouselIndex + 16) % featuredDealsData.length;
         generateFeaturedDeals(featuredDealsData);
       }
     });
     document.getElementById("prev-deals").addEventListener("click", () => {
       if (featuredDealsData.length) {
-        currentCarouselIndex = (currentCarouselIndex - 12 + featuredDealsData.length) % featuredDealsData.length;
+        currentCarouselIndex = (currentCarouselIndex - 16 + featuredDealsData.length) % featuredDealsData.length;
         generateFeaturedDeals(featuredDealsData);
       }
     });
