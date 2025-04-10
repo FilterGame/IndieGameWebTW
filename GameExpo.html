@@ -456,13 +456,13 @@
         link.appendChild(img);
         imgWrapper.appendChild(link);
         // 僅當原價與特價不相同且非特殊狀態時顯示折扣標籤
-        if (price !== bargainPrice && price !== -1 && bargainPrice !== -1 && price !== -2 && bargainPrice !== -2) {
-          const discount = Math.round((1 - bargainPrice / price) * 100);
-          const discountTag = document.createElement("div");
-          discountTag.className = "absolute top-2 right-2 bg-orange-500 text-white px-2 py-1 rounded font-bold";
-          discountTag.textContent = "-" + discount + "%";
-          imgWrapper.appendChild(discountTag);
-        }
+      //  if (price !== bargainPrice && price !== -1 && bargainPrice !== -1 && price !== -2 && bargainPrice !== -2) {
+      //    const discount = Math.round((1 - bargainPrice / price) * 100);
+      //    const discountTag = document.createElement("div");
+      //    discountTag.className = "absolute top-2 right-2 bg-orange-500 text-white px-2 py-1 rounded font-bold";
+      //    discountTag.textContent = "-" + discount + "%";
+      //    imgWrapper.appendChild(discountTag);
+      //  }
         card.appendChild(imgWrapper);
 
         // 遊戲資訊區
