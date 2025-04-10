@@ -117,7 +117,6 @@
 
     <!-- Main Content -->
     <main class="flex-1">
-
       <!-- Featured Deals 區 -->
       <section id="deals-section" class="py-12 bg-white">
         <div class="container">
@@ -129,6 +128,7 @@
           </div>
         </div>
       </section>
+    </main>
 
     <!-- Footer -->
     <footer class="bg-black text-white border-t border-orange-500">
@@ -151,7 +151,7 @@
   </div>
 
   <!-- JavaScript：多國語系、Featured Deals 隨機顯示、淡入動畫 -->
-<script>
+  <script>
     const translations = {
       en: {
         logo_text: "East Asia Indie Games Celebration",
@@ -272,147 +272,137 @@
       }
     };
 
-  let currentLanguage = "zh";
-  let featuredDealsData = [];
-  let currentShuffledDeals = [];
+    let currentLanguage = "zh";
+    let featuredDealsData = [];
+    let currentShuffledDeals = [];
 
-function updateTranslations() {
-  document.querySelectorAll("[data-i18n]").forEach(el => {
-    const key = el.getAttribute("data-i18n");
-    const translated = translations[currentLanguage]?.[key];
-    if (!translated) return;
-
-    switch (el.tagName) {
-      case "TITLE":
-        document.title = translated;
-        break;
-      case "OPTION":
-        el.text = translated;
-        break;
-      case "INPUT":
-        el.placeholder = translated;
-        break;
-      default:
-        el.textContent = translated;
-        break;
-    }
-  });
-}
-
-  function initFadeInAnimation() {
-    const observer = new IntersectionObserver((entries, obs) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("visible");
-          obs.unobserve(entry.target);
+    function updateTranslations() {
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.getAttribute("data-i18n");
+        const translated = translations[currentLanguage]?.[key];
+        if (!translated) return;
+        switch (el.tagName) {
+          case "TITLE":
+            document.title = translated;
+            break;
+          case "OPTION":
+            el.text = translated;
+            break;
+          case "INPUT":
+            el.placeholder = translated;
+            break;
+          default:
+            el.textContent = translated;
+            break;
         }
       });
-    }, { threshold: 0.1 });
-    document.querySelectorAll(".fade-in").forEach(el => observer.observe(el));
-  }
-
-  function shuffleArray(array) {
-    const copy = array.slice();
-    for (let i = copy.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [copy[i], copy[j]] = [copy[j], copy[i]];
     }
-    return copy;
-  }
 
-  function renderShuffledDeals(data) {
-    currentShuffledDeals = shuffleArray(data);
-    renderDeals(currentShuffledDeals);
-  }
+    function initFadeInAnimation() {
+      const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("visible");
+            obs.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1 });
+      document.querySelectorAll(".fade-in").forEach(el => observer.observe(el));
+    }
 
-  function renderDeals(data) {
-    const container = document.getElementById("featured-deals-container");
-    container.innerHTML = "";
-
-    data.forEach(row => {
-      const title = row["title_" + currentLanguage] || row.title_en;
-      const price = parseFloat(row.price);
-      const tag = row.game_type;
-      const bargainPrice = parseFloat(row.bargain_price);
-      const match = row.steamLink.match(/\/app\/(\d+)/);
-      const imageUrl = match
-        ? `https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/${match[1]}/header.jpg`
-        : `/placeholder.svg?height=300&width=400&text=${encodeURIComponent(title)}`;
-
-      const card = document.createElement("div");
-      card.className = "border border-gray-200 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow fade-in";
-
-      const imgWrapper = document.createElement("div");
-      imgWrapper.className = "relative h-48";
-      const link = document.createElement("a");
-      link.href = row.steamLink;
-      link.target = "_blank";
-      const img = document.createElement("img");
-      img.src = imageUrl;
-      img.alt = title;
-      img.className = "object-cover absolute inset-0 w-full h-full zoom-image";
-      link.appendChild(img);
-      imgWrapper.appendChild(link);
-
-      if (price > 0 && bargainPrice > 0 && price !== bargainPrice) {
-        const discount = Math.round((1 - bargainPrice / price) * 100);
-        const discountTag = document.createElement("div");
-        discountTag.className = "absolute top-2 right-2 bg-orange-500 text-white px-2 py-1 rounded font-bold";
-        discountTag.textContent = `-${discount}%`;
-        imgWrapper.appendChild(discountTag);
+    function shuffleArray(array) {
+      const copy = array.slice();
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
       }
-      card.appendChild(imgWrapper);
+      return copy;
+    }
 
-      const cardBody = document.createElement("div");
-      cardBody.className = "p-4";
-      const h3 = document.createElement("h3");
-      h3.className = "font-bold mb-1";
-      h3.textContent = title;
-      cardBody.appendChild(h3);
+    function renderShuffledDeals(data) {
+      currentShuffledDeals = shuffleArray(data);
+      renderDeals(currentShuffledDeals);
+    }
 
-      const infoDiv = document.createElement("div");
+    function renderDeals(data) {
+      const container = document.getElementById("featured-deals-container");
+      container.innerHTML = "";
 
-      if (price === -1) {
-        infoDiv.className = "flex items-center justify-between mb-2";
-        infoDiv.textContent = tag;
-      }
+      data.forEach(row => {
+        const title = row["title_" + currentLanguage] || row.title_en;
+        const price = parseFloat(row.price);
+        const tag = row.game_type;
 
-      // 這裡保留你可能未來用來顯示價格區段的 code，如果有需要可以再開
-      // else if (price === -1 || bargainPrice === -1) {
-      //   infoDiv.textContent = translations[currentLanguage].not_released;
-      // }
+        // 檢查 CSV 中的 bargain_price 欄位，若有填值（自訂圖片 URL）就用它，否則拼湊 Steam 圖片網址
+        const customImageUrl = row.bargain_price && row.bargain_price.trim() !== ''
+          ? row.bargain_price.trim()
+          : null;
+        const match = row.steamLink.match(/\/app\/(\d+)/);
+        const defaultImageUrl = match
+          ? `https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/${match[1]}/header.jpg`
+          : `/placeholder.svg?height=300&width=400&text=${encodeURIComponent(title)}`;
+        const imageUrl = customImageUrl || defaultImageUrl;
 
-      cardBody.appendChild(infoDiv);
-      card.appendChild(cardBody);
+        const card = document.createElement("div");
+        card.className = "border border-gray-200 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow fade-in";
 
-      container.appendChild(card);
+        const imgWrapper = document.createElement("div");
+        imgWrapper.className = "relative h-48";
+        const link = document.createElement("a");
+        link.href = row.steamLink;
+        link.target = "_blank";
+        const img = document.createElement("img");
+        img.src = imageUrl;
+        img.alt = title;
+        img.className = "object-cover absolute inset-0 w-full h-full zoom-image";
+        link.appendChild(img);
+        imgWrapper.appendChild(link);
+
+        card.appendChild(imgWrapper);
+
+        const cardBody = document.createElement("div");
+        cardBody.className = "p-4";
+        const h3 = document.createElement("h3");
+        h3.className = "font-bold mb-1";
+        h3.textContent = title;
+        cardBody.appendChild(h3);
+
+        const infoDiv = document.createElement("div");
+        if (price === -1) {
+          infoDiv.className = "flex items-center justify-between mb-2";
+          infoDiv.textContent = tag;
+        }
+        cardBody.appendChild(infoDiv);
+        card.appendChild(cardBody);
+
+        container.appendChild(card);
+      });
+
+      initFadeInAnimation();
+    }
+
+    function loadDealsCSV() {
+      Papa.parse("deals.csv", {
+        download: true,
+        header: true,
+        complete: function (results) {
+          featuredDealsData = results.data;
+          renderShuffledDeals(featuredDealsData); // 初次隨機排序顯示
+        }
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      updateTranslations();
+      loadDealsCSV();
+      if (typeof loadPublishersCSV === "function") loadPublishersCSV();
     });
 
-    initFadeInAnimation();
-  }
-
-  function loadDealsCSV() {
-    Papa.parse("deals.csv", {
-      download: true,
-      header: true,
-      complete: function (results) {
-        featuredDealsData = results.data;
-        renderShuffledDeals(featuredDealsData); // 初次隨機排序顯示
-      }
+    document.getElementById("language-select").addEventListener("change", e => {
+      currentLanguage = e.target.value;
+      updateTranslations();
+      if (currentShuffledDeals.length) renderDeals(currentShuffledDeals);
     });
-  }
-
-  document.addEventListener("DOMContentLoaded", () => {
-    updateTranslations();
-    loadDealsCSV();
-    if (typeof loadPublishersCSV === "function") loadPublishersCSV();
-  });
-
-  document.getElementById("language-select").addEventListener("change", e => {
-    currentLanguage = e.target.value;
-    updateTranslations();
-    if (currentShuffledDeals.length) renderDeals(currentShuffledDeals); // 不重新隨機，只更新文字
-  });
-</script>
+  </script>
 </body>
 </html>
