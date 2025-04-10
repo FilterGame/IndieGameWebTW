@@ -347,10 +347,10 @@
         h3.className = "font-bold mb-1";
         h3.textContent = title;
         cardBody.appendChild(h3);
+	    const infoDiv = document.createElement("div");
 
 		if (price === -1 )
 		{
-		    const infoDiv = document.createElement("div");
 			infoDiv.className = "flex items-center justify-between mb-2";
 			infoDiv.textContent = tag;
 		}
