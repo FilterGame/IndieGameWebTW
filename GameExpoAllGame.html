@@ -99,10 +99,10 @@
           <span data-i18n="logo_text" class="text-orange-500 font-bold text-xl">East Asia Indie Games Celebration</span>
         </div>
         <nav class="hidden md:flex items-center gap-6">
-          <a href="#" data-i18n="home" class="text-white hover:text-orange-400 transition-colors">立即報名</a>
-          <a href="#news-section" data-i18n="news" class="text-white hover:text-orange-400 transition-colors">NEWS</a>
+          <a href="/GameExpo.html" data-i18n="home" class="text-white hover:text-orange-400 transition-colors">首頁</a>
+          <a href="/GameExpo#news-section" data-i18n="news" class="text-white hover:text-orange-400 transition-colors">NEWS</a>
           <a href="#deals-section" data-i18n="games" class="text-white hover:text-orange-400 transition-colors">GAMES</a>
-          <a href="#contact-section" data-i18n="contact" class="text-white hover:text-orange-400 transition-colors">CONTACT</a>
+          <a href="/GameExpo#contact-section" data-i18n="contact" class="text-white hover:text-orange-400 transition-colors">CONTACT</a>
         </nav>
         <div class="flex items-center gap-4">
           <!-- 語言切換下拉選單 -->
@@ -308,6 +308,7 @@
       shuffled.forEach(row => {
         const title = row["title_" + currentLanguage] || row.title_en;
         const price = parseFloat(row.price);
+		const tag = row.game_type;
         const bargainPrice = parseFloat(row.bargain_price);
         const match = row.steamLink.match(/\/app\/(\d+)/);
         const imageUrl = match
@@ -347,27 +348,32 @@
         h3.textContent = title;
         cardBody.appendChild(h3);
 
-        const infoDiv = document.createElement("div");
-        infoDiv.className = "flex items-center justify-between mb-2";
-        if (price === -1 || bargainPrice === -1) {
-          infoDiv.textContent = translations[currentLanguage].not_released;
-        } else if (price === -2 || bargainPrice === -2) {
-          infoDiv.textContent = translations[currentLanguage].demo_open;
-        } else if (price === bargainPrice) {
-          infoDiv.textContent = `$${price.toFixed(2)}`;
-        } else {
-          const priceDiv = document.createElement("div");
-          priceDiv.className = "flex items-center gap-2";
-          const originalPrice = document.createElement("span");
-          originalPrice.className = "line-through text-gray-500";
-          originalPrice.textContent = `$${price.toFixed(2)}`;
-          const bargainPriceEl = document.createElement("span");
-          bargainPriceEl.className = "text-orange-500 font-bold";
-          bargainPriceEl.textContent = `$${bargainPrice.toFixed(2)}`;
-          priceDiv.appendChild(originalPrice);
-          priceDiv.appendChild(bargainPriceEl);
-          infoDiv.appendChild(priceDiv);
-        }
+		if (price === -1 )
+		{
+		    const infoDiv = document.createElement("div");
+			infoDiv.className = "flex items-center justify-between mb-2";
+			infoDiv.textContent = tag;
+		}
+		
+       // if (price === -1 || bargainPrice === -1) {
+       //   infoDiv.textContent = translations[currentLanguage].not_released;
+       // } else if (price === -2 || bargainPrice === -2) {
+       //   infoDiv.textContent = translations[currentLanguage].demo_open;
+       // } else if (price === bargainPrice) {
+       //   infoDiv.textContent = `$${price.toFixed(2)}`;
+       // } else {
+       //   const priceDiv = document.createElement("div");
+       //   priceDiv.className = "flex items-center gap-2";
+       //   const originalPrice = document.createElement("span");
+       //   originalPrice.className = "line-through text-gray-500";
+       //   originalPrice.textContent = `$${price.toFixed(2)}`;
+        //  const bargainPriceEl = document.createElement("span");
+       //   bargainPriceEl.className = "text-orange-500 font-bold";
+       //   bargainPriceEl.textContent = `$${bargainPrice.toFixed(2)}`;
+       //   priceDiv.appendChild(originalPrice);
+       //   priceDiv.appendChild(bargainPriceEl);
+        //  infoDiv.appendChild(priceDiv);
+       // }
         cardBody.appendChild(infoDiv);
         card.appendChild(cardBody);
 

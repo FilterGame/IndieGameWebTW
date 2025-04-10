@@ -426,6 +426,7 @@
         const row = data[idx];
         const title = row["title_" + currentLanguage] || row.title_en;
         const price = parseFloat(row.price);
+		const tag = row.game_type;
         const bargainPrice = parseFloat(row.bargain_price);
         // 解析 steamLink 中的 appId（格式例如 /app/440/ ）
         const match = row.steamLink.match(/\/app\/(\d+)/);
@@ -475,32 +476,14 @@
         const infoDiv = document.createElement("div");
         infoDiv.className = "flex items-center justify-between mb-2";
 
-        // 處理價格特殊狀況
-        if (price === -1 || bargainPrice === -1) {
-          let priceText = document.createElement("span");
-          priceText.textContent = translations[currentLanguage].not_released;
-          infoDiv.appendChild(priceText);
-        } else if (price === -2 || bargainPrice === -2) {
-          let priceText = document.createElement("span");
-          priceText.textContent = translations[currentLanguage].demo_open;
-          infoDiv.appendChild(priceText);
-        } else if (price === bargainPrice) {
-          let priceText = document.createElement("span");
-          priceText.textContent = "$" + price.toFixed(2);
-          infoDiv.appendChild(priceText);
-        } else {
-          let priceDiv = document.createElement("div");
-          priceDiv.className = "flex items-center gap-2";
-          let originalPrice = document.createElement("span");
-          originalPrice.className = "line-through text-gray-500";
-          originalPrice.textContent = "$" + price.toFixed(2);
-          let bargainPriceEl = document.createElement("span");
-          bargainPriceEl.className = "text-orange-500 font-bold";
-          bargainPriceEl.textContent = "$" + bargainPrice.toFixed(2);
-          priceDiv.appendChild(originalPrice);
-          priceDiv.appendChild(bargainPriceEl);
-          infoDiv.appendChild(priceDiv);
-        }
+		if (price === -1 )
+		{
+		    const infoDiv = document.createElement("div");
+			infoDiv.className = "flex items-center justify-between mb-2";
+			infoDiv.textContent = tag;
+		}
+
+
         cardBody.appendChild(infoDiv);
         card.appendChild(cardBody);
         container.appendChild(card);
