@@ -503,25 +503,36 @@
     }
 
     // Publisher CSV 生成：讀取 publishers.csv（欄位：logo, link）
-    function generatePublishers(data) {
-      const container = document.getElementById("publishers-container");
-      container.innerHTML = "";
-      data.forEach(row => {
-        const a = document.createElement("a");
-        a.href = row.link;
-        a.target = "_blank";
-        a.className = "flex items-center justify-center p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow";
-        // 假設 CSV 中 logo 為圖片檔名，圖片存放在 logos/ 目錄下
-        const img = document.createElement("img");
-        img.src = `logos/${row.logo}`;
-        img.alt = row.logo;
-        img.width = 120;
-        img.height = 80;
-        img.className = "object-contain";
-        a.appendChild(img);
-        container.appendChild(a);
-      });
-    }
+	  function generatePublishers(data) {
+		const container = document.getElementById("publishers-container");
+		container.innerHTML = "";
+
+		data.forEach(row => {
+		  // 外層 a 標籤改為 flex-col 以垂直排列
+		  const a = document.createElement("a");
+		  a.href = row.link;
+		  a.target = "_blank";
+		  a.className = "flex flex-col items-center justify-center p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow";
+
+		  // Logo 圖片
+		  const img = document.createElement("img");
+		  img.src = `logos/${row.logo}`;
+		  img.alt = row.name;
+		  img.width = 120;
+		  img.height = 80;
+		  img.className = "object-contain";
+		  a.appendChild(img);
+
+		  // 在圖片下方加入 name 文字，並設 data-i18n
+		  const nameEl = document.createElement("div");
+		  nameEl.textContent = row.name;
+		  nameEl.setAttribute("data-i18n", row.name);
+		  nameEl.className = "mt-2 text-center font-medium";
+		  a.appendChild(nameEl);
+
+		  container.appendChild(a);
+		});
+	  }
 	
 	function loadPublishersCSV() {
 	  Papa.parse("publishers.csv", {
