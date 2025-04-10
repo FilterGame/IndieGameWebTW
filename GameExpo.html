@@ -119,11 +119,6 @@
               <p data-i18n="hero_description" class="text-white mb-8">
                 The biggest online game sale event of the year with exclusive deals and special offers!
               </p>
-              <a href="https://docs.google.com/forms/d/e/1FAIpQLSd6OQhUuFQmCE0r4JlyQeVdhrFxs1i-ehCCbufv6yQDnmG7-w/viewform" target="_blank" rel="noopener noreferrer"
-                 data-i18n="browse_deals"
-                 class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-6 text-lg inline-block">
-                立即報名
-              </a>
             </div>
             <div class="relative h-64 md:h-80">
               <img src="gameExpo/header.png" alt="Game Sale Expo Banner" class="object-contain absolute inset-0 w-full h-full" />
@@ -249,10 +244,10 @@
           </div>
           <div class="flex items-center gap-4">
 			<a href="#" data-i18n="organizer" class="text-gray-400 ">舉辦單位:</a>
-            <a href="https://leojuan1234.wordpress.com/" target="_blank" class="text-gray-400 hover:text-white transition-colors">焊蛙遊戲</a>
+            <a href="https://lit.link/hanwagame" target="_blank" class="text-gray-400 hover:text-white transition-colors">焊蛙遊戲</a>
             <a href="https://linktr.ee/yohcanstudio" target="_blank" class="text-gray-400 hover:text-white transition-colors">葉開罐工作室</a>
             <a href="https://www.arcadegalaxy.space/" target="_blank" class="text-gray-400 hover:text-white transition-colors">第九商行</a>
-            <a href="https://x.com/FilterGame_Dev/" target="_blank" class="text-gray-400 hover:text-white transition-colors">FilterGame</a>
+            <a href="https://filtergame.com/" target="_blank" class="text-gray-400 hover:text-white transition-colors">FilterGame</a>
           </div>
 		<!--  
           <div class="flex items-center gap-4">
@@ -421,7 +416,7 @@
       const container = document.getElementById("featured-deals-container");
       container.innerHTML = "";
       const total = data.length;
-      for (let i = 0; i < 8; i++) {
+      for (let i = 0; i < 12; i++) {
         const idx = (currentCarouselIndex + i) % total;
         const row = data[idx];
         const title = row["title_" + currentLanguage] || row.title_en;
@@ -550,13 +545,13 @@
     // 輪播按鈕事件（以 8 個一組）
     document.getElementById("next-deals").addEventListener("click", () => {
       if (featuredDealsData.length) {
-        currentCarouselIndex = (currentCarouselIndex + 8) % featuredDealsData.length;
+        currentCarouselIndex = (currentCarouselIndex + 12) % featuredDealsData.length;
         generateFeaturedDeals(featuredDealsData);
       }
     });
     document.getElementById("prev-deals").addEventListener("click", () => {
       if (featuredDealsData.length) {
-        currentCarouselIndex = (currentCarouselIndex - 8 + featuredDealsData.length) % featuredDealsData.length;
+        currentCarouselIndex = (currentCarouselIndex - 12 + featuredDealsData.length) % featuredDealsData.length;
         generateFeaturedDeals(featuredDealsData);
       }
     });
