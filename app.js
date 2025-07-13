@@ -1,7 +1,7 @@
 /**********************
  * 語言切換功能 & 全域變數
  **********************/
-// 新增: API 與翻譯文字設定
+// API 與翻譯文字設定
 const priceLangs = {
   zh: { cc: "tw", l: "tchinese" },
   en: { cc: "us", l: "english" },
@@ -67,13 +67,13 @@ document.querySelectorAll(".lang-btn").forEach((btn) => {
     currentLanguage = this.getAttribute("data-lang");
     updateCardTitles();
 
-    // 修改: 語言變更時，更新所有卡片的價格
+    // 語言變更時，更新所有卡片的價格
     const allCards = document.querySelectorAll(".game-card");
     allCards.forEach((card, index) => {
-      // 使用延遲來避免短時間內發送大量請求
+      // **修改: 增加延遲到 500ms**
       setTimeout(() => {
         fetchGamePrice(card, currentLanguage);
-      }, index * 100); // 每 0.1 秒查詢一張卡片
+      }, index * 500);
     });
   });
 });
@@ -112,7 +112,7 @@ function loadCSV(csvFile) {
         rows.sort(() => Math.random() - 0.5);
       }
 
-      const cardsToProcess = []; // 修改: 用來存放待處理價格的卡片
+      const cardsToProcess = [];
 
       rows.forEach((row, index) => {
         const steamLink = row[0].trim();
@@ -131,7 +131,7 @@ function loadCSV(csvFile) {
         const imageUrl = `https://steamcdn-a.akamaihd.net/steam/apps/${appId}/library_600x900_2x.jpg`;
         const cardDiv = document.createElement("div");
         cardDiv.className = "game-card";
-        cardDiv.dataset.appid = appId; // **重要: 將 appid 存放在元素上**
+        cardDiv.dataset.appid = appId;
 
         const aTag = document.createElement("a");
         aTag.href = steamLink;
@@ -161,14 +161,15 @@ function loadCSV(csvFile) {
         cardDiv.appendChild(aTag);
         grid.appendChild(cardDiv);
 
-        cardsToProcess.push(cardDiv); // 修改: 將建立好的卡片加入待處理佇列
+        cardsToProcess.push(cardDiv);
       });
 
-      // **新增: 處理價格查詢佇列**
+      // 處理價格查詢佇列
       cardsToProcess.forEach((card, index) => {
+        // **修改: 增加延遲到 500ms**
         setTimeout(() => {
           fetchGamePrice(card, currentLanguage);
-        }, index * 100); // 每 0.1 秒查詢一張卡片
+        }, index * 500);
       });
 
       const observer = new IntersectionObserver(
@@ -211,25 +212,17 @@ window.addEventListener("DOMContentLoaded", () => {
     loadCSV(firstCsvBtn.getAttribute("data-csv"));
     updatePageTitle();
   }
-  // 啟動彈幕功能
   loadDanmakuCSV();
 });
 
 /**********************
- * 新增: Steam 價格查詢與標籤建立功能
+ * Steam 價格查詢與標籤建立功能
  **********************/
 
-/**
- * 根據卡片元素和語言，建立價格標籤
- * @param {HTMLElement} cardElement 卡片的最外層 div
- * @param {string} type 標籤類型 ('not-released', 'released', 'on-sale')
- * @param {string} text 顯示的文字
- */
 function createPriceTag(cardElement, type, text) {
   const container = cardElement.querySelector(".relative");
   if (!container) return;
 
-  // 建立前先移除舊標籤，避免語言切換時重複疊加
   const oldTag = container.querySelector(".price-tag");
   if (oldTag) oldTag.remove();
 
@@ -238,36 +231,44 @@ function createPriceTag(cardElement, type, text) {
   priceTag.textContent = text;
   container.appendChild(priceTag);
 
-  // 短暫延遲後加入 visible class 以觸發 CSS 動畫
   setTimeout(() => {
     priceTag.classList.add("visible");
   }, 10);
 }
 
-/**
- * 從 Steam API 獲取遊戲價格資訊
- * @param {HTMLElement} cardElement 要更新的卡片元素
- * @param {string} language 當前語言 ('zh', 'en', 'ja')
- */
 async function fetchGamePrice(cardElement, language) {
   const appId = cardElement.dataset.appid;
   if (!appId) return;
 
   const langConfig = priceLangs[language];
-  const apiUrl = `https://store.steampowered.com/api/appdetails?appids=${appId}&cc=${langConfig.cc}&l=${langConfig.l}`;
+  
+  // **修改: 建立目標 URL 和代理 URL**
+  const targetUrl = `https://store.steampowered.com/api/appdetails?appids=${appId}&cc=${langConfig.cc}&l=${langConfig.l}`;
+  const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(
+    targetUrl
+  )}`;
 
   try {
-    const response = await fetch(apiUrl);
+    // **修改: fetch 代理 URL**
+    const response = await fetch(proxyUrl);
     if (!response.ok) {
-      console.error(`API 請求失敗 for ${appId}. Status: ${response.status}`);
+      // 這裡的錯誤通常是代理伺服器本身的錯誤
+      console.error(`Proxy request failed for ${appId}. Status: ${response.status}`);
       return;
     }
 
-    const data = await response.json();
+    const proxyData = await response.json();
+
+    // **修改: 從代理的回應中解析出原始的 Steam 資料**
+    // 代理會把原始資料放在 'contents' 欄位中，且是字串格式，需要再次解析
+    if (!proxyData.contents) {
+        console.error(`Proxy response for ${appId} is empty or invalid.`);
+        return;
+    }
+    const data = JSON.parse(proxyData.contents);
     const appData = data[appId];
 
     if (!appData || !appData.success) {
-      // API 回傳 success: false 通常是遊戲尚未發售或無商店頁面
       createPriceTag(cardElement, "not-released", priceText.unreleased[language]);
       return;
     }
@@ -287,10 +288,10 @@ async function fetchGamePrice(cardElement, language) {
         createPriceTag(cardElement, "released", priceInfo.final_formatted);
       }
     } else {
-      // 如果沒有 price_overview，也視為未發售 (例如即將推出但未定價)
       createPriceTag(cardElement, "not-released", priceText.unreleased[language]);
     }
   } catch (error) {
+    // 這個 catch 會捕捉到 fetch 失敗、JSON 解析失敗等所有錯誤
     console.error(`獲取價格時發生錯誤 for ${appId}:`, error);
   }
 }
@@ -318,7 +319,7 @@ modalOverlay.addEventListener("click", function () {
 let danmakuList = [];
 let totalDanmakuWeight = 0;
 let danmakuIntervalId = null;
-let danmakuEnabled = true; // 新增變數來追蹤彈幕狀態
+let danmakuEnabled = true;
 
 function loadDanmakuCSV() {
   fetch("danmaku.csv?v=" + Date.now())
