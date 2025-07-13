@@ -124,36 +124,3 @@ main {
   pointer-events: none;
   animation: danmaku-move 15s linear forwards;
 }
-
-/* ===== 新增: 價格標籤樣式 ===== */
-.price-tag {
-  position: absolute;
-  top: 0.5rem; /* 8px */
-  right: 0.5rem; /* 8px */
-  padding: 0.25rem 0.5rem; /* 4px 8px */
-  border-radius: 0.375rem; /* 6px */
-  font-size: 0.875rem; /* 14px */
-  font-weight: bold;
-  color: white;
-  z-index: 5; /* 確保在圖片和標題遮罩之上 */
-  opacity: 0;
-  transform: scale(0.9) translateY(-10px);
-  transition: opacity 0.3s ease-out, transform 0.3s ease-out;
-}
-
-.price-tag.visible {
-  opacity: 1;
-  transform: scale(1) translateY(0);
-}
-
-.price-tag.not-released {
-  background-color: #f59e0b; /* 未發售: 黃色 (Tailwind amber-500) */
-}
-
-.price-tag.released {
-  background-color: #10b981; /* 已發售: 綠色 (Tailwind emerald-500) */
-}
-
-.price-tag.on-sale {
-  background-color: #ef4444; /* 特價中: 紅色 (Tailwind red-500) */
-}
